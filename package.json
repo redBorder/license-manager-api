@@ -1,0 +1,35 @@
+{
+  "name": "license-manager-api",
+  "version": "0.1.0",
+  "author": {
+    "name": "Diego Fernández Barrera",
+    "email": "bigomby@gmail.com"
+  },
+  "main": "server/server.js",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "node .",
+    "posttest": "npm run lint && nsp check"
+  },
+  "dependencies": {
+    "compression": "^1.0.3",
+    "cors": "^2.5.2",
+    "helmet": "^1.3.0",
+    "loopback": "^3.0.0",
+    "loopback-boot": "^2.6.5",
+    "loopback-component-explorer": "^4.0.0",
+    "loopback-connector-mongodb": "^1.18.1",
+    "serve-favicon": "^2.0.1",
+    "strong-error-handler": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1",
+    "eslint-config-loopback": "^8.0.0",
+    "nsp": "^2.1.0"
+  },
+  "repository": {
+    "url": "https://github.com/redBorder/license-manager-api"
+  },
+  "license": "AGPL-3.0",
+  "description": "HTTP API for redBorder's Licensing Platform."
+}
