@@ -14,7 +14,7 @@
     ]
   },
   "AccessToken": {
-    "dataSource": "db",
+    "dataSource": "mongo",
     "public": false,
     "relations": {
       "user": {
@@ -42,5 +42,9 @@
   "user": {
     "dataSource": "mongo",
     "public": true
+  },
+  "group": {
+    "dataSource": "mongo",
+    "public": false
   }
 }

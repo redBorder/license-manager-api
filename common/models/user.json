@@ -10,11 +10,29 @@
   "validations": [],
   "relations": {
     "accessTokens": {
-      "model": "AccessToken",
       "type": "hasMany",
+      "model": "AccessToken",
       "foreignKey": "userId"
+    },
+    "groups": {
+      "type": "hasMany",
+      "model": "group",
+      "foreignKey": "ownerId"
     }
   },
-  "acls": [],
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__get__groups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__create__groups"
+    }
+  ],
   "methods": {}
 }
