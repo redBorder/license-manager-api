@@ -4,13 +4,13 @@
     "connector": "memory"
   },
   "mongo": {
-    "host": "mongo",
-    "port": 0,
+    "host": "ds137550.mlab.com",
+    "port": 37550,
     "url": "",
-    "database": "license-manager",
-    "password": "",
+    "database": "heroku_qb1qc3fq",
+    "password": "root",
     "name": "mongo",
-    "user": "",
+    "user": "root",
     "connector": "mongodb"
   }
 }
