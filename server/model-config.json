@@ -13,12 +13,16 @@
       "./mixins"
     ]
   },
-  "User": {
-    "dataSource": "mongo"
-  },
   "AccessToken": {
     "dataSource": "db",
-    "public": false
+    "public": false,
+    "relations": {
+      "user": {
+        "type": "belongsTo",
+        "model": "user",
+        "foreignKey": "userId"
+      }
+    }
   },
   "ACL": {
     "dataSource": "mongo",
@@ -34,5 +38,9 @@
   "Role": {
     "dataSource": "mongo",
     "public": false
+  },
+  "user": {
+    "dataSource": "mongo",
+    "public": true
   }
 }
