@@ -14,7 +14,7 @@
     ]
   },
   "AccessToken": {
-    "dataSource": "mongo",
+    "dataSource": "db",
     "public": false,
     "relations": {
       "user": {
@@ -25,26 +25,30 @@
     }
   },
   "ACL": {
-    "dataSource": "mongo",
+    "dataSource": "db",
     "public": false
   },
   "RoleMapping": {
-    "dataSource": "mongo",
+    "dataSource": "db",
     "public": false,
     "options": {
       "strictObjectIDCoercion": true
     }
   },
   "Role": {
-    "dataSource": "mongo",
+    "dataSource": "db",
     "public": false
   },
   "user": {
-    "dataSource": "mongo",
+    "dataSource": "db",
     "public": true
   },
   "group": {
-    "dataSource": "mongo",
+    "dataSource": "db",
+    "public": true
+  },
+  "cluster": {
+    "dataSource": "db",
     "public": false
   }
 }

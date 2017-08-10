@@ -2,15 +2,5 @@
   "db": {
     "name": "db",
     "connector": "memory"
-  },
-  "mongo": {
-    "host": "ds137550.mlab.com",
-    "port": 37550,
-    "url": "",
-    "database": "heroku_qb1qc3fq",
-    "password": "root",
-    "name": "mongo",
-    "user": "root",
-    "connector": "mongodb"
   }
 }
