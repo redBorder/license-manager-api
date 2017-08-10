@@ -9,12 +9,37 @@
   "properties": {},
   "validations": [],
   "relations": {
+    "owner": {
+      "type": "belongsTo",
+      "model": "user",
+      "foreignKey": "ownerId"
+    },
     "members": {
       "type": "hasMany",
       "model": "user",
       "foreignKey": "groupId"
+    },
+    "clusters": {
+      "type": "hasMany",
+      "model": "cluster",
+      "foreignKey": "groupId"
     }
   },
-  "acls": [],
+  "acls": [{
+    "principalType": "ROLE",
+    "principalId": "$everyone",
+    "permission": "DENY",
+    "property": "*"
+  }, {
+    "principalType": "ROLE",
+    "principalId": "$owner",
+    "permission": "ALLOW",
+    "property": "__get__clusters"
+  }, {
+    "principalType": "ROLE",
+    "principalId": "$owner",
+    "permission": "ALLOW",
+    "property": "__get__members"
+  }],
   "methods": {}
 }
