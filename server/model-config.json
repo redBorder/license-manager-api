@@ -54,5 +54,9 @@
   "organization": {
     "dataSource": "db",
     "public": false
+  },
+  "license-pool": {
+    "dataSource": "db",
+    "public": false
   }
 }

@@ -28,6 +28,11 @@
       "type": "hasMany",
       "model": "organization",
       "foreignKey": "groupId"
+    },
+    "license-pools": {
+      "type": "hasMany",
+      "model": "license-pool",
+      "foreignKey": "groupId"
     }
   },
   "acls": [
@@ -47,6 +52,12 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
+      "property": "__create__clusters"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
       "property": "__get__organizations"
     },
     {
@@ -60,6 +71,12 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "property": "__get__members"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__create__license-pools"
     }
   ],
   "methods": {}
