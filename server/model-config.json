@@ -50,5 +50,9 @@
   "cluster": {
     "dataSource": "db",
     "public": false
+  },
+  "organization": {
+    "dataSource": "db",
+    "public": false
   }
 }

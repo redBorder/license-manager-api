@@ -1,11 +1,16 @@
 {
-  "name": "cluster",
+  "name": "organization",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
     "validateUpsert": true
   },
-  "properties": {},
+  "properties": {
+    "clusterId": {
+      "type": "string",
+      "required": "true"
+    }
+  },
   "validations": [],
   "relations": {
     "group": {
@@ -13,9 +18,9 @@
       "model": "group",
       "foreignKey": "groupId"
     },
-    "organizations": {
-      "type": "hasMany",
-      "model": "organization",
+    "cluster": {
+      "type": "belongsTo",
+      "model": "cluster",
       "foreignKey": "clusterId"
     }
   },
