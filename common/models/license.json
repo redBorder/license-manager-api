@@ -1,0 +1,19 @@
+{
+  "name": "license",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "pool": {
+      "type": "belongsTo",
+      "model": "license-pool",
+      "foreignKey": "poolId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

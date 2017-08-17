@@ -27,6 +27,11 @@
       "type": "belongsTo",
       "model": "organization",
       "foreignKey": "organizationId"
+    },
+    "licenses": {
+      "type": "hasMany",
+      "model": "license",
+      "foreignKey": "poolId"
     }
   },
   "acls": [],

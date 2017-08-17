@@ -52,6 +52,12 @@
       "principalType": "ROLE",
       "principalId": "$owner",
       "permission": "ALLOW",
+      "property": "__get__license-pools"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
       "property": "__create__clusters"
     },
     {
@@ -77,6 +83,18 @@
       "principalId": "$owner",
       "permission": "ALLOW",
       "property": "__create__license-pools"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__create__license-pools__licenses"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__get__license-pools__licenses"
     }
   ],
   "methods": {}
