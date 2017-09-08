@@ -10,4 +10,23 @@ module.exports = {
     database: process.env.DB_NAME,
     url: process.env.MONGODB_URI,
   },
+  email: {
+    name: 'email',
+    connector: 'mail',
+    transports: [
+      {
+        type: 'smtp',
+        host: process.env.MAIL_SMTP_SERVER,
+        secure: false,
+        port: process.env.MAIL_SMTP_PORT,
+        tls: {
+          rejectUnauthorized: false,
+        },
+        auth: {
+          user: process.env.MAIL_AUTH_USER,
+          pass: process.env.MAIL_AUTH_PASSWD,
+        },
+      },
+    ],
+  },
 };
