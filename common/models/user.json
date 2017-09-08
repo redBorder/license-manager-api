@@ -4,9 +4,19 @@
   "base": "User",
   "idInjection": true,
   "options": {
-    "validateUpsert": true
+    "validateUpsert": true,
+    "emailVerificationRequired": true
   },
-  "properties": {},
+  "properties": {
+    "firstName": {
+      "type": "String",
+      "required": "true"
+    },
+    "lastName": {
+      "type": "String",
+      "required": "true"
+    }
+  },
   "validations": [],
   "relations": {
     "accessTokens": {

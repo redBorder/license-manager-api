@@ -43,6 +43,9 @@
     "dataSource": "db",
     "public": true
   },
+  "Email": {
+    "dataSource": "email"
+  },
   "group": {
     "dataSource": "db",
     "public": true
