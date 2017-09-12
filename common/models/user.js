@@ -3,35 +3,28 @@
 const path = require('path');
 
 module.exports = User => {
+  User.afterRemote('*.__create__groups', async (context, instance) => {
+    await instance.members.add(instance.ownerId);
+    await instance.save();
+  });
+
   if (process.env.NODE_ENV !== 'testing') {
-    User.afterRemote('create', (context, user, next) => {
+    User.afterRemote('create', async (context, user) => {
       const options = {
         type: 'email',
+        protocol: process.env.PROTOCOL || 'http',
+        port: process.env.DISPLAY_PORT || 3000,
+        host: process.env.HOSTNAME || 'localhost',
         to: user.email,
         from: 'noreply@redborder.com',
-        subject: 'Thanks for registering.',
-        template: path.resolve(__dirname, '../../server/views/verify.ejs'),
-        redirect: '/verified',
         user: user,
       };
 
       user.verify(options, (err, response) => {
         if (err) {
           User.deleteById(user.id);
-          return next(err);
+          throw err;
         }
-
-        context.res.render(
-          path.resolve(__dirname, '../../server/views/response.ejs'),
-          {
-            title: 'Signed up successfully',
-            content:
-              'Please check your email and click on the verification link ' +
-              'before logging in.',
-            redirectTo: '/',
-            redirectToLinkText: 'Log in',
-          }
-        );
       });
     });
   }
