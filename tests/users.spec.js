@@ -1,16 +1,15 @@
 'use strict';
 
 process.env.NODE_ENV = 'testing';
+const SERVER_URL = 'http://localhost:3000/api/v0/';
 
 const path = require('path');
 const app = require('../server/server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+
 chai.should();
-
 chai.use(chaiHttp);
-
-const User = app.models.User;
 
 class MockMailer {
   static send(options, context, cb) {
@@ -19,6 +18,7 @@ class MockMailer {
 }
 
 describe('User', () => {
+  const User = app.models.User;
   const users = [
     {
       email: 'test1@test.com',
@@ -54,7 +54,7 @@ describe('User', () => {
     await Promise.all(
       users.map(async user => {
         const res = await chai
-          .request('http://localhost:3000/api/v0/')
+          .request(SERVER_URL)
           .post('users')
           .send(user);
 
@@ -75,7 +75,7 @@ describe('User', () => {
       users.map(async user => {
         try {
           await chai
-            .request('http://localhost:3000/api/v0/')
+            .request(SERVER_URL)
             .post('users/login')
             .send({
               email: user.email,
@@ -106,7 +106,7 @@ describe('User', () => {
     await Promise.all(
       users.map(async user => {
         const res = await chai
-          .request('http://localhost:3000/api/v0/')
+          .request(SERVER_URL)
           .post('users/login')
           .send({
             email: user.email,
@@ -129,7 +129,7 @@ describe('User', () => {
     await Promise.all(
       users.map(async user => {
         const res = await chai
-          .request('http://localhost:3000/api/v0/')
+          .request(SERVER_URL)
           .post(`users/${user.userId}/groups`)
           .set('Authorization', user.userToken);
 
@@ -144,7 +144,7 @@ describe('User', () => {
     await Promise.all(
       users.map(async user => {
         const res = await chai
-          .request('http://localhost:3000/api/v0/')
+          .request(SERVER_URL)
           .get(`users/${user.userId}/groups`)
           .set('Authorization', user.userToken);
 
@@ -162,7 +162,7 @@ describe('User', () => {
       users.map(async user => {
         try {
           const res = await chai
-            .request('http://localhost:3000/api/v0/')
+            .request(SERVER_URL)
             .get(`users/${user.userId + 1}/groups`)
             .set('Authorization', user.userToken);
 
