@@ -15,9 +15,8 @@
       "foreignKey": "ownerId"
     },
     "members": {
-      "type": "hasMany",
-      "model": "user",
-      "foreignKey": "groupId"
+      "type": "hasAndBelongsToMany",
+      "model": "user"
     },
     "clusters": {
       "type": "hasMany",
@@ -41,6 +40,18 @@
       "principalId": "$everyone",
       "permission": "DENY",
       "property": "*"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "addMember"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "removeMember"
     },
     {
       "principalType": "ROLE",
@@ -97,5 +108,30 @@
       "property": "__get__license-pools__licenses"
     }
   ],
-  "methods": {}
+  "methods": {
+    "prototype.addMember": {
+      "accepts": [
+        {
+          "arg": "email",
+          "root": true,
+          "type": "object",
+          "http": {"source": "body"}
+        }
+      ],
+      "returns": [],
+      "http": {"verb": "post", "path": "/add-member", "errorStatus": 400}
+    },
+    "prototype.removeMember": {
+      "accepts": [
+        {
+          "arg": "email",
+          "root": true,
+          "type": "object",
+          "http": {"source": "body"}
+        }
+      ],
+      "returns": [],
+      "http": {"verb": "post", "path": "/remove-member", "errorStatus": 400}
+    }
+  }
 }
