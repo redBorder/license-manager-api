@@ -7,47 +7,27 @@ const path = require('path');
 const app = require('../server/server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const TestHelpers = require('./test-helpers');
+const TestFixtures = require('./test-fixtures');
+
+const fixtures = new TestFixtures();
 
 chai.should();
 chai.use(chaiHttp);
 
-class MockMailer {
-  static send(options, context, cb) {
-    cb(null, null);
-  }
-}
-
 describe('User', () => {
   const User = app.models.User;
-  const users = [
-    {
-      email: 'test1@test.com',
-      firstName: 'John',
-      lastName: 'Doe',
-      password: '12345678',
-    },
-    {
-      email: 'test2@test.com',
-      firstName: 'Jack',
-      lastName: 'Bauer',
-      password: '87654321',
-    },
-    {
-      email: 'test3@test.com',
-      firstName: 'Whoopi',
-      lastName: 'Goldberg',
-      password: '777777777',
-    },
-  ];
 
   let server = null;
+  let users = fixtures.getUsers();
 
-  beforeEach(done => {
-    server = app.listen(done);
+  before(async () => {
+    server = await app.listen();
   });
 
-  afterEach(done => {
-    server.close(done);
+  after(async () => {
+    await app.models.User.destroyAll();
+    await server.close();
   });
 
   it('Should be created', async () => {
@@ -77,10 +57,7 @@ describe('User', () => {
           await chai
             .request(SERVER_URL)
             .post('users/login')
-            .send({
-              email: user.email,
-              password: user.password,
-            });
+            .send(user);
         } catch (err) {
           err.should.have.status(401);
         }
@@ -95,8 +72,9 @@ describe('User', () => {
         await userInstance.verify({
           type: 'email',
           from: 'test',
-          mailer: MockMailer,
+          mailer: TestHelpers.MockMailer,
         });
+
         await User.confirm(userInstance.id, userInstance.verificationToken, '');
       })
     );
@@ -121,55 +99,6 @@ describe('User', () => {
 
         user.userToken = res.body.id;
         user.userId = res.body.userId;
-      })
-    );
-  });
-
-  it('Should be able to create groups', async () => {
-    await Promise.all(
-      users.map(async user => {
-        const res = await chai
-          .request(SERVER_URL)
-          .post(`users/${user.userId}/groups`)
-          .set('Authorization', user.userToken);
-
-        res.should.have.status(200);
-        res.body.should.have.property('id');
-        res.body.should.have.property('ownerId', user.userId);
-      })
-    );
-  });
-
-  it('Should be able to list his groups', async () => {
-    await Promise.all(
-      users.map(async user => {
-        const res = await chai
-          .request(SERVER_URL)
-          .get(`users/${user.userId}/groups`)
-          .set('Authorization', user.userToken);
-
-        res.should.have.status(200);
-        res.body.should.be.a('array');
-        res.body.should.have.lengthOf(1);
-        res.body[0].should.have.property('id');
-        res.body[0].should.have.property('ownerId', user.userId);
-      })
-    );
-  });
-
-  it('Should not be able to list others users groups', async () => {
-    await Promise.all(
-      users.map(async user => {
-        try {
-          const res = await chai
-            .request(SERVER_URL)
-            .get(`users/${user.userId + 1}/groups`)
-            .set('Authorization', user.userToken);
-
-          res.should.have.status(401);
-        } catch (err) {
-          err.toString().should.equal('Error: Unauthorized');
-        }
       })
     );
   });

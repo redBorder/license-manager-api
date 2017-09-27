@@ -3,12 +3,14 @@
 process.env.NODE_ENV = 'testing';
 const SERVER_URL = 'http://localhost:3000/api/v0/';
 
+const path = require('path');
 const app = require('../server/server');
 const chai = require('chai');
 const TestHelpers = require('./test-helpers');
 
-describe('Groups', () => {
-  const Group = app.models.Group;
+chai.should();
+
+describe('Members', () => {
   const User = app.models.User;
   const users = [
     {
@@ -33,11 +35,9 @@ describe('Groups', () => {
       password: '777777777',
     },
   ];
-  const owner = users[0];
-  const member = users[1];
 
-  let server = null;
   let usersInstances = null;
+  let server = null;
 
   beforeEach(async () => {
     server = await app.listen();
@@ -71,46 +71,28 @@ describe('Groups', () => {
     await server.close();
   });
 
-  it('Users should be able to create groups', async () => {
-    const owner = usersInstances[0];
-    const helper = new TestHelpers.UserHelper(SERVER_URL, owner);
-    const res = await helper.createGroup('test');
-    res.status.should.equal(200);
+  it('Should be able to list his groups', async () => {
+    await Promise.all(
+      usersInstances.map(async user => {
+        const helper = new TestHelpers.UserHelper(SERVER_URL, user);
+
+        await helper.createGroup('test');
+        const groups = await helper.getGroups();
+        groups[0].should.contain({name: `${user.username}/test`});
+      })
+    );
   });
 
-  it('The owner should be able to add members', async () => {
-    const owner = usersInstances[0];
-    const member = usersInstances[1];
+  it('Should not be able to list groups in which he is not a \
+member', async () => {
+    await Promise.all(
+      usersInstances.map(async user => {
+        const helper = new TestHelpers.UserHelper(SERVER_URL, user);
 
-    const helper = new TestHelpers.UserHelper(SERVER_URL, owner);
-
-    await helper.createGroup('test');
-    await helper.addMember(member);
-    const members = await helper.getMembers();
-
-    members.length.should.equal(2);
-    members[0].should.include({
-      email: owner.email,
-    });
-    members[1].should.include({
-      email: member.email,
-    });
-  });
-
-  it('The owner should be able to remove members', async () => {
-    const owner = usersInstances[0];
-    const member = usersInstances[1];
-
-    const helper = new TestHelpers.UserHelper(SERVER_URL, owner);
-
-    await helper.createGroup('test');
-    await helper.addMember(member);
-    await helper.deleteMember(member);
-    const members = await helper.getMembers();
-
-    members.length.should.equal(1);
-    members[0].should.include({
-      email: owner.email,
-    });
+        await helper.createGroup('test');
+        const groups = await helper.getGroups();
+        groups[0].should.contain({name: `${user.username}/test`});
+      })
+    );
   });
 });
