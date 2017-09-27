@@ -8,13 +8,15 @@
     "emailVerificationRequired": true
   },
   "properties": {
-    "firstName": {
+    "username": {
       "type": "String",
-      "required": "true"
+      "required": true
+    },
+    "firstName": {
+      "type": "String"
     },
     "lastName": {
-      "type": "String",
-      "required": "true"
+      "type": "String"
     }
   },
   "validations": [],
@@ -23,25 +25,14 @@
       "type": "hasMany",
       "model": "AccessToken",
       "foreignKey": "userId"
-    },
-    "groups": {
-      "type": "hasMany",
-      "model": "group",
-      "foreignKey": "ownerId"
     }
   },
   "acls": [
     {
       "principalType": "ROLE",
-      "principalId": "$owner",
+      "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "__get__groups"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "$owner",
-      "permission": "ALLOW",
-      "property": "__create__groups"
+      "property": "listGroups"
     }
   ],
   "methods": {}
