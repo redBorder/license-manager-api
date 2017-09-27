@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+
 function getApp(model) {
   return new Promise((resolve, reject) => {
     model.getApp((err, app) => {
@@ -22,8 +24,6 @@ module.exports = async function(Group) {
   Group.disableRemoteMethodByName('updateAll');
   Group.disableRemoteMethodByName('prototype.updateAttributes');
 
-  Group.disableRemoteMethodByName('find');
-  Group.disableRemoteMethodByName('findById');
   Group.disableRemoteMethodByName('findOne');
 
   Group.disableRemoteMethodByName('deleteById');
@@ -34,17 +34,54 @@ module.exports = async function(Group) {
   Group.disableRemoteMethodByName('prototype.__create__members');
   Group.disableRemoteMethodByName('prototype.__delete__members');
 
+  Group.beforeRemote('create', async (context, instance) => {
+    if (!context.args.data.name) {
+      return;
+    }
+
+    const user = await User.findById(context.req.accessToken.userId);
+    if (!user) {
+      throw Error('Invalid access token');
+    }
+
+    context.args.data.name = `${user.username}/${context.args.data.name}`;
+  });
+
+  Group.afterRemote('create', async (context, instance) => {
+    await instance.members.add(context.req.accessToken.userId);
+    await instance.admins.add(context.req.accessToken.userId);
+    await instance.owner(context.req.accessToken.userId);
+  });
+
+  Group.afterRemote('find', async (context, instances) => {
+    const token = context.req.accessToken.userId.toString();
+
+    const allowedGroup = (await Promise.all(
+      instances.map(async instance => await instance.members.find({}))
+    )).map(group => group.some(member => member.id.toString() === token));
+
+    const filteredInstances = _.flatten(
+      _.zip(instances, allowedGroup).filter(pair => !pair.pop())
+    );
+
+    _.pullAll(instances, filteredInstances);
+  });
+
   /**
-  * Adds a member to the group. Checks the following:
-  *  - Is this user already on the group?
-  *  - Does this user exists?
-  **/
+   * Adds a member to the group. Checks the following:
+   *  - Is this user already on the group?
+   *  - Does this user exists?
+   **/
   Group.prototype.addMember = async function(data) {
     if (!data.email) {
       throw Error('No email provided');
     }
 
-    const user = await User.findOne({where: {email: data.email}});
+    const user = await User.findOne({
+      where: {
+        email: data.email,
+      },
+    });
     if (!user) {
       throw Error('User does not exists');
     }
@@ -59,17 +96,21 @@ module.exports = async function(Group) {
   };
 
   /**
-  * Removes a member to the group. Checks the following:
-  *  - Is this user already on the group?
-  *  - Does this user exists?
-  *  - Is the user the owner of the group
-  **/
+   * Removes a member to the group. Checks the following:
+   *  - Is this user already on the group?
+   *  - Does this user exists?
+   *  - Is the user the owner of the group
+   **/
   Group.prototype.removeMember = async function(data) {
     if (!data.email) {
       throw Error('No email provided');
     }
 
-    const user = await User.findOne({where: {email: data.email}});
+    const user = await User.findOne({
+      where: {
+        email: data.email,
+      },
+    });
     if (!user) {
       throw Error('User does not exists');
     }
