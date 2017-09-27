@@ -24,6 +24,7 @@ module.exports = async User => {
 
   User.afterRemote('*.__create__groups', async (context, instance) => {
     await instance.members.add(instance.ownerId);
+    await instance.admins.add(instance.ownerId);
     await instance.save();
   });
 
