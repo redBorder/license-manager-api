@@ -15,7 +15,8 @@ module.exports = async function(Group) {
   const app = await getApp(Group);
   const User = app.models.User;
 
-  Group.disableRemoteMethodByName('create');
+  Group.validatesUniquenessOf('name', {message: 'name is not unique'});
+
   Group.disableRemoteMethodByName('exists');
   Group.disableRemoteMethodByName('upsert');
   Group.disableRemoteMethodByName('upsertWithWhere');
