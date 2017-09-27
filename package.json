@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "checks": "npm run lint && nsp check",
+    "checks": "npm run lint && nsp check --warn-only",
     "test": "mocha tests/"
   },
   "dependencies": {
