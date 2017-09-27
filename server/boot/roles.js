@@ -17,17 +17,7 @@ module.exports = function(app) {
       if (err) return cb(err);
       if (!group) return cb(new Error('Group not found'));
 
-      var Group = app.models.Group;
-      Group.count(
-        {
-          ownerId: group.ownerId,
-          memberId: userId,
-        },
-        (err, count) => {
-          if (err) return cb(err);
-          return count > 0 ? cb(null, true) : cb(null, false);
-        }
-      );
+      group.members.exists(userId, cb);
     });
   });
 
@@ -45,17 +35,7 @@ module.exports = function(app) {
       if (err) return cb(err);
       if (!group) return cb(new Error('Group not found'));
 
-      var Group = app.models.Group;
-      Group.count(
-        {
-          ownerId: group.ownerId,
-          memberId: userId,
-        },
-        (err, count) => {
-          if (err) return cb(err);
-          return count > 0 ? cb(null, true) : cb(null, false);
-        }
-      );
+      group.admins.exists(userId, cb);
     });
   });
 };
