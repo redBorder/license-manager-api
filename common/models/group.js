@@ -35,7 +35,7 @@ module.exports = async function(Group) {
   Group.disableRemoteMethodByName('prototype.__create__members');
   Group.disableRemoteMethodByName('prototype.__delete__members');
 
-  Group.beforeRemote('create', async (context, instance) => {
+  Group.beforeRemote('create', async context => {
     if (!context.args.data.name) {
       return;
     }
@@ -51,7 +51,8 @@ module.exports = async function(Group) {
   Group.afterRemote('create', async (context, instance) => {
     await instance.members.add(context.req.accessToken.userId);
     await instance.admins.add(context.req.accessToken.userId);
-    await instance.owner(context.req.accessToken.userId);
+    instance.owner(await User.findById(context.req.accessToken.userId));
+    instance.save();
   });
 
   Group.afterRemote('find', async (context, instances) => {

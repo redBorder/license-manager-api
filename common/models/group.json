@@ -16,7 +16,8 @@
   "relations": {
     "owner": {
       "type": "belongsTo",
-      "model": "user"
+      "model": "user",
+      "foreignKey": "ownerId"
     },
     "members": {
       "type": "hasAndBelongsToMany",
@@ -127,7 +128,12 @@
       "permission": "ALLOW",
       "property": "__get__admins"
     },
-
+    {
+      "principalType": "ROLE",
+      "principalId": "groupMember",
+      "permission": "ALLOW",
+      "property": "__get__owner"
+    },
     {
       "principalType": "ROLE",
       "principalId": "groupMember",
