@@ -92,6 +92,18 @@
     },
     {
       "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__link__admins"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$owner",
+      "permission": "ALLOW",
+      "property": "__unlink__admins"
+    },
+    {
+      "principalType": "ROLE",
       "principalId": "groupMember",
       "permission": "ALLOW",
       "property": "__get__clusters"
