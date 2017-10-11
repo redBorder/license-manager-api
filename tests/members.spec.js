@@ -95,4 +95,23 @@ member', async () => {
       })
     );
   });
+
+  it('Should be able to get members from a group he belongs', async () => {
+    const owner = usersInstances[0];
+    const admin = usersInstances[1];
+    const member = usersInstances[2];
+
+    const helper = new TestHelpers.UserHelper(SERVER_URL, owner);
+
+    await helper.createGroup('test');
+    helper.addMember(member);
+    // helper.addMember(admin);
+
+    // const members = await helper.getMembers();
+    const admins = await helper.getAdmins();
+
+    // console.log(members);
+
+    // admins.should.have.lengthOf(1);
+  });
 });

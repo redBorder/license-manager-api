@@ -27,6 +27,14 @@ class UserHelper {
     return this.user;
   }
 
+  async getAdmins(user) {
+    const res = await this.req
+      .get(`groups/${this.group.id}/admins`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
+
   async createGroup(name) {
     const res = await this.req
       .post('groups')
@@ -36,7 +44,11 @@ class UserHelper {
       });
 
     this.group = res.body;
-    return res;
+    return res.body;
+  }
+
+  async setGroup(group) {
+    this.group = group;
   }
 
   async getGroups() {
@@ -63,9 +75,25 @@ class UserHelper {
     return res;
   }
 
-  async deleteMember(member) {
+  async addAdmin(admin) {
+    const res = await this.req
+      .put(`groups/${this.group.id}/admins/rel/${admin.id}`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res;
+  }
+
+  async removeMember(member) {
     const res = await this.req
       .delete(`groups/${this.group.id}/members/rel/${member.id}`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res;
+  }
+
+  async removeAdmin(admin) {
+    const res = await this.req
+      .delete(`groups/${this.group.id}/admins/rel/${admin.id}`)
       .set('Authorization', this.user.authToken.id);
 
     return res;
