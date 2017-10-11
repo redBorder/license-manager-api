@@ -69,4 +69,9 @@ module.exports = async function(Group) {
 
     _.pullAll(instances, filteredInstances);
   });
+
+  Group.afterRemote('prototype.__link__admins', async (context, instance) => {
+    const group = await Group.findById(instance.groupId);
+    await group.members.add(instance.adminId);
+  });
 };
