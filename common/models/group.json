@@ -20,12 +20,16 @@
       "foreignKey": "ownerId"
     },
     "members": {
-      "type": "hasAndBelongsToMany",
-      "model": "user"
+      "type": "hasMany",
+      "model": "user",
+      "through": "GroupMember",
+      "foreignKey": "groupId"
     },
     "admins": {
-      "type": "hasAndBelongsToMany",
-      "model": "user"
+      "type": "hasMany",
+      "model": "user",
+      "through": "GroupAdmin",
+      "foreignKey": "groupId"
     },
     "clusters": {
       "type": "hasMany",

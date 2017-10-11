@@ -50,10 +50,10 @@ module.exports = async function(Group) {
   });
 
   Group.afterRemote('create', async (context, instance) => {
-    await instance.members.add(context.req.accessToken.userId);
-    await instance.admins.add(context.req.accessToken.userId);
-    instance.owner(await User.findById(context.req.accessToken.userId));
-    instance.save();
+    await instance.owner(context.owner);
+    await instance.members.add(context.owner);
+    await instance.admins.add(context.owner);
+    await instance.save();
   });
 
   Group.afterRemote('find', async (context, instances) => {

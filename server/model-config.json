@@ -65,5 +65,13 @@
   "license": {
     "dataSource": "db",
     "public": false
+  },
+  "GroupMember": {
+    "dataSource": "db",
+    "public": false
+  },
+  "GroupAdmin": {
+    "dataSource": "db",
+    "public": false
   }
 }
