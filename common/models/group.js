@@ -13,7 +13,7 @@ function getApp(model) {
 
 module.exports = async function(Group) {
   const app = await getApp(Group);
-  const User = app.models.User;
+  const user = app.models.user;
 
   Group.validatesUniquenessOf('name', {message: 'name is not unique'});
 
@@ -40,12 +40,13 @@ module.exports = async function(Group) {
       return;
     }
 
-    const user = await User.findById(context.req.accessToken.userId);
-    if (!user) {
+    const usr = await user.findById(context.req.accessToken.userId);
+    if (!usr) {
       throw Error('Invalid access token');
     }
 
-    context.args.data.name = `${user.username}/${context.args.data.name}`;
+    context.owner = usr;
+    context.args.data.name = `${usr.username}/${context.args.data.name}`;
   });
 
   Group.afterRemote('create', async (context, instance) => {
