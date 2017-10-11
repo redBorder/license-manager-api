@@ -153,30 +153,5 @@
       "property": "__get__license-pools__licenses"
     }
   ],
-  "methods": {
-    "prototype.addMember": {
-      "accepts": [
-        {
-          "arg": "email",
-          "root": true,
-          "type": "object",
-          "http": {"source": "body"}
-        }
-      ],
-      "returns": [],
-      "http": {"verb": "post", "path": "/add-member", "errorStatus": 400}
-    },
-    "prototype.removeMember": {
-      "accepts": [
-        {
-          "arg": "email",
-          "root": true,
-          "type": "object",
-          "http": {"source": "body"}
-        }
-      ],
-      "returns": [],
-      "http": {"verb": "post", "path": "/remove-member", "errorStatus": 400}
-    }
-  }
+  "methods": {}
 }
