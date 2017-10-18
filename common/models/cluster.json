@@ -5,7 +5,15 @@
   "options": {
     "validateUpsert": true
   },
-  "properties": {},
+  "properties": {
+    "uuid": {
+      "type": "String",
+      "required": "true"
+    },
+    "description": {
+      "type": "String"
+    }
+  },
   "validations": [],
   "relations": {
     "group": {

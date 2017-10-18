@@ -74,12 +74,6 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "groupMember",
-      "permission": "ALLOW",
-      "property": "__get__clusters"
-    },
-    {
-      "principalType": "ROLE",
       "principalId": "groupAdmin",
       "permission": "ALLOW",
       "property": "__link__members"
@@ -106,12 +100,6 @@
       "principalType": "ROLE",
       "principalId": "groupMember",
       "permission": "ALLOW",
-      "property": "__get__clusters"
-    },
-    {
-      "principalType": "ROLE",
-      "principalId": "groupMember",
-      "permission": "ALLOW",
       "property": "__get__license-pools"
     },
     {
@@ -119,6 +107,18 @@
       "principalId": "groupAdmin",
       "permission": "ALLOW",
       "property": "__create__clusters"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "groupMember",
+      "permission": "ALLOW",
+      "property": "__get__clusters"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "groupAdmin",
+      "permission": "ALLOW",
+      "property": "__delete__clusters"
     },
     {
       "principalType": "ROLE",
