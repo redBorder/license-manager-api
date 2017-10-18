@@ -8,9 +8,7 @@ const app = require('../server/server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const TestHelpers = require('./test-helpers');
-const TestFixtures = require('./test-fixtures');
-
-const fixtures = new TestFixtures();
+const UsersFixtures = require('./test-fixtures').users;
 
 chai.should();
 chai.use(chaiHttp);
@@ -19,7 +17,7 @@ describe('User', () => {
   const User = app.models.User;
 
   let server = null;
-  let users = fixtures.getUsers();
+  let users = UsersFixtures.getUsers();
 
   before(async () => {
     server = await app.listen();

@@ -98,6 +98,31 @@ class UserHelper {
 
     return res;
   }
+
+  async getClusters() {
+    const res = await this.req
+      .get(`groups/${this.group.id}/clusters`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
+
+  async createCluster(uuid) {
+    const res = await this.req
+      .post(`groups/${this.group.id}/clusters`)
+      .set('Authorization', this.user.authToken.id)
+      .send({uuid});
+
+    return res.body;
+  }
+
+  async removeCluster(uuid) {
+    const res = await this.req
+      .delete(`groups/${this.group.id}/clusters`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
 }
 
 module.exports = {
