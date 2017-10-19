@@ -116,9 +116,13 @@ class UserHelper {
     return res.body;
   }
 
-  async removeCluster(uuid) {
+  async removeCluster(cluster) {
     const res = await this.req
-      .delete(`groups/${this.group.id}/clusters`)
+      .delete(`groups/${this.group.id}/clusters/${cluster.id}`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
       .set('Authorization', this.user.authToken.id);
 
     return res.body;

@@ -118,7 +118,7 @@
       "principalType": "ROLE",
       "principalId": "groupAdmin",
       "permission": "ALLOW",
-      "property": "__delete__clusters"
+      "property": "__destroyById__clusters"
     },
     {
       "principalType": "ROLE",

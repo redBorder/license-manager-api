@@ -88,7 +88,7 @@ describe('Clusters', () => {
 
     const group = await ownerHelper.createGroup('test');
     const cluster = await ownerHelper.createCluster('TEST-UUID');
-    await ownerHelper.removeCluster('TEST-UUID');
+    await ownerHelper.removeCluster(cluster);
 
     const clusters = await ownerHelper.getClusters();
     clusters.should.have.length(0);
@@ -150,7 +150,7 @@ describe('Clusters', () => {
     const cluster = await ownerHelper.createCluster('TEST-UUID');
     await ownerHelper.addAdmin(usersInstances[1]);
     adminHelper.setGroup(group);
-    await adminHelper.removeCluster('TEST-UUID');
+    await adminHelper.removeCluster(cluster);
 
     const clusters = await adminHelper.getClusters();
 
