@@ -8,10 +8,15 @@
   "properties": {
     "uuid": {
       "type": "String",
-      "required": "true"
+      "required": true
     },
     "description": {
       "type": "String"
+    },
+    "globalLicensing": {
+      "type": "Boolean",
+      "required": true,
+      "default": true
     }
   },
   "validations": [],

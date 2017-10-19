@@ -107,11 +107,11 @@ class UserHelper {
     return res.body;
   }
 
-  async createCluster(uuid) {
+  async createCluster(uuid, globalLicensing = true) {
     const res = await this.req
       .post(`groups/${this.group.id}/clusters`)
       .set('Authorization', this.user.authToken.id)
-      .send({uuid});
+      .send({uuid, globalLicensing});
 
     return res.body;
   }
