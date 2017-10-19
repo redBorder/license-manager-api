@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = async User => {
+module.exports = function(User) {
   if (process.env.NODE_ENV !== 'testing') {
     User.afterRemote('create', async (context, user) => {
       const options = {
