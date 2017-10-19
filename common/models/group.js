@@ -57,11 +57,11 @@ module.exports = async function(Group) {
   });
 
   Group.afterRemote('find', async (context, instances) => {
-    const token = context.req.accessToken.userId.toString();
+    const userToken = context.req.accessToken.userId.toString();
 
     const allowedGroup = (await Promise.all(
       instances.map(async instance => await instance.members.find({}))
-    )).map(group => group.some(member => member.id.toString() === token));
+    )).map(group => group.some(member => member.id.toString() === userToken));
 
     const filteredInstances = _.flatten(
       _.zip(instances, allowedGroup).filter(pair => !pair.pop())
