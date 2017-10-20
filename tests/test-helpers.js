@@ -123,6 +123,27 @@ class UserHelper {
 
     return res.body;
   }
+
+  async createOrganization(uuid, cluster) {
+    const res = await this.req
+      .post(`groups/${this.group.id}/organizations`)
+      .set('Authorization', this.user.authToken.id)
+      .send({uuid, clusterId: cluster.id});
+
+    return res.body;
+  }
+
+  async getOrganizations(uuid) {
+    const res = await this.req
+      .get(`groups/${this.group.id}/organizations`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
+
+  async removeOrganization(org) {
+    const res = await this.req
+      .delete(`groups/${this.group.id}/organizations/${org.id}`)
       .set('Authorization', this.user.authToken.id);
 
     return res.body;

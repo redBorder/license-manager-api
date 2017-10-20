@@ -14,6 +14,7 @@ function getApp(model) {
 module.exports = async function(Group) {
   const app = await getApp(Group);
   const user = app.models.user;
+  const Cluster = app.models.cluster;
 
   Group.validatesUniquenessOf('name', {message: 'name is not unique'});
 
@@ -73,5 +74,17 @@ module.exports = async function(Group) {
   Group.afterRemote('prototype.__link__admins', async (context, instance) => {
     const group = await Group.findById(instance.groupId);
     await group.members.add(instance.adminId);
+  });
+
+  Group.beforeRemote('prototype.__create__organizations', async context => {
+    const cluster = await Cluster.findById(context.args.data.clusterId);
+    if (!cluster) {
+      throw 'Invalid cluster id';
+    }
+
+    if (cluster.globalLicensing) {
+      throw 'Is not possible to add organizations to a cluster with ' +
+        'Global Licensing enabled';
+    }
   });
 };

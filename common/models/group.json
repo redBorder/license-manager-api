@@ -128,9 +128,15 @@
     },
     {
       "principalType": "ROLE",
-      "principalId": "groupMember",
+      "principalId": "groupAdmin",
       "permission": "ALLOW",
       "property": "__create__organizations"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "groupAdmin",
+      "permission": "ALLOW",
+      "property": "__destroyById__organizations"
     },
     {
       "principalType": "ROLE",
