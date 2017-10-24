@@ -35,13 +35,11 @@ class UserHelper {
     return res.body;
   }
 
-  async createGroup(name) {
+  async createGroup(name = 'test', type = 'redborder') {
     const res = await this.req
       .post('groups')
       .set('Authorization', this.user.authToken.id)
-      .send({
-        name: 'test',
-      });
+      .send({type, name});
 
     this.group = res.body;
     return res.body;
@@ -145,6 +143,15 @@ class UserHelper {
     const res = await this.req
       .delete(`groups/${this.group.id}/organizations/${org.id}`)
       .set('Authorization', this.user.authToken.id);
+
+    return res.body;
+  }
+
+  async requestLicensePool(attributes) {
+    const res = await this.req
+      .post(`groups/${this.group.id}/license-pools`)
+      .set('Authorization', this.user.authToken.id)
+      .send(attributes);
 
     return res.body;
   }

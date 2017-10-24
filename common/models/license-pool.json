@@ -6,9 +6,27 @@
     "validateUpsert": true
   },
   "properties": {
-    "clusterId": {
-      "type": "string",
-      "required": "true"
+    "duration": {
+      "type": "number",
+      "required": true
+    },
+    "expiration": {
+      "type": "date",
+      "required": true
+    },
+    "limit": {
+      "type": "number",
+      "required": true
+    },
+    "sensors": {
+      "type": "object",
+      "required": true
+    },
+    "status": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
     }
   },
   "validations": [],
@@ -21,7 +39,8 @@
     "cluster": {
       "type": "belongsTo",
       "model": "cluster",
-      "foreignKey": "clusterId"
+      "foreignKey": "clusterId",
+      "required": true
     },
     "organization": {
       "type": "belongsTo",
