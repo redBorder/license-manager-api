@@ -60,7 +60,7 @@
   },
   "license-pool": {
     "dataSource": "db",
-    "public": false
+    "public": true
   },
   "license": {
     "dataSource": "db",
@@ -73,5 +73,9 @@
   "GroupAdmin": {
     "dataSource": "db",
     "public": false
+  },
+  "manager": {
+    "dataSource": "db",
+    "public": true
   }
 }
