@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/redBorder/license-manager-api.svg?branch=master)](https://travis-ci.org/redBorder/license-manager-api)
+[![](https://img.shields.io/badge/api-docs-blue.svg)](https://redborder.github.io/license-manager-api/api)
+[![](https://img.shields.io/badge/server-docs-blue.svg)](https://redborder.github.io/license-manager-api)
 
 # License Manager API
 
