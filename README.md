@@ -35,12 +35,3 @@ environment variables:
 
 You can set `NODE_ENV='testing'` to use an in-memory no-persistent database if
 you just want to make a quick check.
-
-
-### Habitat
-
-`// TODO`
-
-### Docker
-
-`// TODO`
