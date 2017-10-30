@@ -80,82 +80,6 @@ paths:
           schema:
             $ref: '#/definitions/AccessToken'
       deprecated: false
-  '/users/{id}/groups/{fk}':
-    get:
-      tags:
-        - user
-      summary: Find a related item by id for groups.
-      operationId: user.prototype.__findById__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for groups
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/group'
-      deprecated: false
-    delete:
-      tags:
-        - user
-      summary: Delete a related item by id for groups.
-      operationId: user.prototype.__destroyById__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for groups
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '204':
-          description: Request was successful
-      deprecated: false
-    put:
-      tags:
-        - user
-      summary: Update a related item by id for groups.
-      operationId: user.prototype.__updateById__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for groups
-          required: true
-          type: string
-          format: JSON
-        - name: data
-          in: body
-          required: false
-          schema:
-            $ref: '#/definitions/group'
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/group'
-      deprecated: false
   '/users/{id}/accessTokens':
     get:
       tags:
@@ -227,100 +151,6 @@ paths:
         - user
       summary: Counts accessTokens of user.
       operationId: user.prototype.__count__accessTokens
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: where
-          in: query
-          description: Criteria to match model instances
-          required: false
-          type: string
-          format: JSON
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            type: object
-            properties:
-              count:
-                type: number
-                format: double
-      deprecated: false
-  '/users/{id}/groups':
-    get:
-      tags:
-        - user
-      summary: Queries groups of user.
-      operationId: user.prototype.__get__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: filter
-          in: query
-          required: false
-          type: string
-          format: JSON
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/group'
-      deprecated: false
-    post:
-      tags:
-        - user
-      summary: Creates a new instance in groups of this model.
-      operationId: user.prototype.__create__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-        - name: data
-          in: body
-          required: false
-          schema:
-            $ref: '#/definitions/group'
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/group'
-      deprecated: false
-    delete:
-      tags:
-        - user
-      summary: Deletes all groups of this model.
-      operationId: user.prototype.__delete__groups
-      parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '204':
-          description: Request was successful
-      deprecated: false
-  '/users/{id}/groups/count':
-    get:
-      tags:
-        - user
-      summary: Counts groups of user.
-      operationId: user.prototype.__count__groups
       parameters:
         - name: id
           in: path
@@ -918,158 +748,6 @@ paths:
           schema:
             $ref: '#/definitions/user'
       deprecated: false
-  '/groups/{id}/members/{fk}':
-    get:
-      tags:
-        - group
-      summary: Find a related item by id for members.
-      operationId: group.prototype.__findById__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/user'
-      deprecated: false
-    delete:
-      tags:
-        - group
-      summary: Delete a related item by id for members.
-      operationId: group.prototype.__destroyById__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '204':
-          description: Request was successful
-      deprecated: false
-    put:
-      tags:
-        - group
-      summary: Update a related item by id for members.
-      operationId: group.prototype.__updateById__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-        - name: data
-          in: body
-          required: false
-          schema:
-            $ref: '#/definitions/user'
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/user'
-      deprecated: false
-  '/groups/{id}/members/rel/{fk}':
-    put:
-      tags:
-        - group
-      summary: Add a related item by id for members.
-      operationId: group.prototype.__link__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-        - name: data
-          in: body
-          required: false
-          schema:
-            $ref: '#/definitions/groupuser'
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            $ref: '#/definitions/groupuser'
-      deprecated: false
-    delete:
-      tags:
-        - group
-      summary: Remove the members relation to an item by id.
-      operationId: group.prototype.__unlink__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '204':
-          description: Request was successful
-      deprecated: false
-    head:
-      tags:
-        - group
-      summary: Check the existence of members relation to an item by id.
-      operationId: group.prototype.__exists__members
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: fk
-          in: path
-          description: Foreign key for members
-          required: true
-          type: string
-          format: JSON
-      responses:
-        '200':
-          description: Request was successful
-          schema:
-            type: boolean
-      deprecated: false
   '/groups/{id}/clusters/{fk}':
     get:
       tags:
@@ -1298,12 +976,12 @@ paths:
           schema:
             $ref: '#/definitions/license-pool'
       deprecated: false
-  '/groups/{id}/members':
+  '/groups/{id}/members/{fk}':
     get:
       tags:
         - group
-      summary: Queries members of group.
-      operationId: group.prototype.__get__members
+      summary: Find a related item by id for members.
+      operationId: group.prototype.__findById__members
       parameters:
         - name: id
           in: path
@@ -1311,28 +989,55 @@ paths:
           required: true
           type: string
           format: JSON
-        - name: filter
-          in: query
-          required: false
+        - name: fk
+          in: path
+          description: Foreign key for members
+          required: true
           type: string
           format: JSON
       responses:
         '200':
           description: Request was successful
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/user'
+            $ref: '#/definitions/user'
       deprecated: false
-    post:
+    delete:
       tags:
         - group
-      summary: Creates a new instance in members of this model.
-      operationId: group.prototype.__create__members
+      summary: Delete a related item by id for members.
+      operationId: group.prototype.__destroyById__members
       parameters:
         - name: id
           in: path
           description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for members
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+    put:
+      tags:
+        - group
+      summary: Update a related item by id for members.
+      operationId: group.prototype.__updateById__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for members
           required: true
           type: string
           format: JSON
@@ -1347,15 +1052,51 @@ paths:
           schema:
             $ref: '#/definitions/user'
       deprecated: false
-    delete:
+  '/groups/{id}/members/rel/{fk}':
+    put:
       tags:
         - group
-      summary: Deletes all members of this model.
-      operationId: group.prototype.__delete__members
+      summary: Add a related item by id for members.
+      operationId: group.prototype.__link__members
       parameters:
         - name: id
           in: path
           description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for members
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/GroupMember'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/GroupMember'
+      deprecated: false
+    delete:
+      tags:
+        - group
+      summary: Remove the members relation to an item by id.
+      operationId: group.prototype.__unlink__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for members
           required: true
           type: string
           format: JSON
@@ -1363,12 +1104,11 @@ paths:
         '204':
           description: Request was successful
       deprecated: false
-  '/groups/{id}/members/count':
-    get:
+    head:
       tags:
         - group
-      summary: Counts members of group.
-      operationId: group.prototype.__count__members
+      summary: Check the existence of members relation to an item by id.
+      operationId: group.prototype.__exists__members
       parameters:
         - name: id
           in: path
@@ -1376,21 +1116,169 @@ paths:
           required: true
           type: string
           format: JSON
-        - name: where
-          in: query
-          description: Criteria to match model instances
-          required: false
+        - name: fk
+          in: path
+          description: Foreign key for members
+          required: true
           type: string
           format: JSON
       responses:
         '200':
           description: Request was successful
           schema:
-            type: object
-            properties:
-              count:
-                type: number
-                format: double
+            type: boolean
+      deprecated: false
+  '/groups/{id}/admins/{fk}':
+    get:
+      tags:
+        - group
+      summary: Find a related item by id for admins.
+      operationId: group.prototype.__findById__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/user'
+      deprecated: false
+    delete:
+      tags:
+        - group
+      summary: Delete a related item by id for admins.
+      operationId: group.prototype.__destroyById__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+    put:
+      tags:
+        - group
+      summary: Update a related item by id for admins.
+      operationId: group.prototype.__updateById__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/user'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/user'
+      deprecated: false
+  '/groups/{id}/admins/rel/{fk}':
+    put:
+      tags:
+        - group
+      summary: Add a related item by id for admins.
+      operationId: group.prototype.__link__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/GroupAdmin'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/GroupAdmin'
+      deprecated: false
+    delete:
+      tags:
+        - group
+      summary: Remove the admins relation to an item by id.
+      operationId: group.prototype.__unlink__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+    head:
+      tags:
+        - group
+      summary: Check the existence of admins relation to an item by id.
+      operationId: group.prototype.__exists__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for admins
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: boolean
       deprecated: false
   '/groups/{id}/clusters':
     get:
@@ -1651,6 +1539,194 @@ paths:
         - group
       summary: Counts license-pools of group.
       operationId: group.prototype.__count__license-pools
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+                format: double
+      deprecated: false
+  '/groups/{id}/members':
+    get:
+      tags:
+        - group
+      summary: Queries members of group.
+      operationId: group.prototype.__get__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: filter
+          in: query
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user'
+      deprecated: false
+    post:
+      tags:
+        - group
+      summary: Creates a new instance in members of this model.
+      operationId: group.prototype.__create__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/user'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/user'
+      deprecated: false
+    delete:
+      tags:
+        - group
+      summary: Deletes all members of this model.
+      operationId: group.prototype.__delete__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  '/groups/{id}/members/count':
+    get:
+      tags:
+        - group
+      summary: Counts members of group.
+      operationId: group.prototype.__count__members
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+                format: double
+      deprecated: false
+  '/groups/{id}/admins':
+    get:
+      tags:
+        - group
+      summary: Queries admins of group.
+      operationId: group.prototype.__get__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: filter
+          in: query
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/user'
+      deprecated: false
+    post:
+      tags:
+        - group
+      summary: Creates a new instance in admins of this model.
+      operationId: group.prototype.__create__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/user'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/user'
+      deprecated: false
+    delete:
+      tags:
+        - group
+      summary: Deletes all admins of this model.
+      operationId: group.prototype.__delete__admins
+      parameters:
+        - name: id
+          in: path
+          description: group id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  '/groups/{id}/admins/count':
+    get:
+      tags:
+        - group
+      summary: Counts admins of group.
+      operationId: group.prototype.__count__admins
       parameters:
         - name: id
           in: path
@@ -2089,43 +2165,16 @@ paths:
           schema:
             type: file
       deprecated: false
-  '/groups/{id}/add-member':
-    post:
-      tags:
-        - group
-      operationId: group.prototype.addMember
-      parameters:
-        - name: id
-          in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: email
-          in: body
-          required: false
-          schema:
-            type: object
-      responses:
-        '204':
-          description: Request was successful
-      deprecated: false
-  '/groups/{id}/license-pools/{nk}/group':
+  '/license-pools/{id}/group':
     get:
       tags:
-        - group
+        - license-pool
       summary: Fetches belongsTo relation group.
-      operationId: group.prototype.__get__license-pools__group
+      operationId: license-pool.prototype.__get__group
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2139,22 +2188,16 @@ paths:
           schema:
             $ref: '#/definitions/group'
       deprecated: false
-  '/groups/{id}/license-pools/{nk}/cluster':
+  '/license-pools/{id}/cluster':
     get:
       tags:
-        - group
+        - license-pool
       summary: Fetches belongsTo relation cluster.
-      operationId: group.prototype.__get__license-pools__cluster
+      operationId: license-pool.prototype.__get__cluster
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2168,22 +2211,16 @@ paths:
           schema:
             $ref: '#/definitions/cluster'
       deprecated: false
-  '/groups/{id}/license-pools/{nk}/organization':
+  '/license-pools/{id}/organization':
     get:
       tags:
-        - group
+        - license-pool
       summary: Fetches belongsTo relation organization.
-      operationId: group.prototype.__get__license-pools__organization
+      operationId: license-pool.prototype.__get__organization
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2197,22 +2234,16 @@ paths:
           schema:
             $ref: '#/definitions/organization'
       deprecated: false
-  '/groups/{id}/license-pools/{nk}/licenses/{fk}':
+  '/license-pools/{id}/licenses/{fk}':
     get:
       tags:
-        - group
+        - license-pool
       summary: Find a related item by id for licenses.
-      operationId: group.prototype.__findById__license-pools__licenses
+      operationId: license-pool.prototype.__findById__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2230,19 +2261,13 @@ paths:
       deprecated: false
     delete:
       tags:
-        - group
+        - license-pool
       summary: Delete a related item by id for licenses.
-      operationId: group.prototype.__destroyById__license-pools__licenses
+      operationId: license-pool.prototype.__destroyById__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2258,19 +2283,13 @@ paths:
       deprecated: false
     put:
       tags:
-        - group
+        - license-pool
       summary: Update a related item by id for licenses.
-      operationId: group.prototype.__updateById__license-pools__licenses
+      operationId: license-pool.prototype.__updateById__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2291,22 +2310,16 @@ paths:
           schema:
             $ref: '#/definitions/license'
       deprecated: false
-  '/groups/{id}/license-pools/{nk}/licenses':
+  '/license-pools/{id}/licenses':
     get:
       tags:
-        - group
+        - license-pool
       summary: Queries licenses of license-pool.
-      operationId: group.prototype.__get__license-pools__licenses
+      operationId: license-pool.prototype.__get__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2325,19 +2338,13 @@ paths:
       deprecated: false
     post:
       tags:
-        - group
+        - license-pool
       summary: Creates a new instance in licenses of this model.
-      operationId: group.prototype.__create__license-pools__licenses
+      operationId: license-pool.prototype.__create__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2354,19 +2361,13 @@ paths:
       deprecated: false
     delete:
       tags:
-        - group
+        - license-pool
       summary: Deletes all licenses of this model.
-      operationId: group.prototype.__delete__license-pools__licenses
+      operationId: license-pool.prototype.__delete__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2374,22 +2375,16 @@ paths:
         '204':
           description: Request was successful
       deprecated: false
-  '/groups/{id}/license-pools/{nk}/licenses/count':
+  '/license-pools/{id}/licenses/count':
     get:
       tags:
-        - group
+        - license-pool
       summary: Counts licenses of license-pool.
-      operationId: group.prototype.__count__license-pools__licenses
+      operationId: license-pool.prototype.__count__licenses
       parameters:
         - name: id
           in: path
-          description: group id
-          required: true
-          type: string
-          format: JSON
-        - name: nk
-          in: path
-          description: Foreign key for license-pools.
+          description: license-pool id
           required: true
           type: string
           format: JSON
@@ -2409,9 +2404,734 @@ paths:
                 type: number
                 format: double
       deprecated: false
+  /license-pools:
+    post:
+      tags:
+        - license-pool
+      summary: Create a new instance of the model and persist it into the data source.
+      operationId: license-pool.create
+      parameters:
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+    patch:
+      tags:
+        - license-pool
+      summary: >-
+        Patch an existing model instance or insert a new one into the data
+        source.
+      operationId: license-pool.patchOrCreate
+      parameters:
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+    put:
+      tags:
+        - license-pool
+      summary: >-
+        Replace an existing model instance or insert a new one into the data
+        source.
+      operationId: license-pool.replaceOrCreate__put_license-pools
+      parameters:
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+    get:
+      tags:
+        - license-pool
+      summary: Find all instances of the model matched by filter from the data source.
+      operationId: license-pool.find
+      parameters:
+        - name: filter
+          in: query
+          description: >-
+            Filter defining fields, where, include, order, offset, and limit -
+            must be a JSON-encoded string ({"something":"value"})
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/license-pool'
+      deprecated: false
+  /license-pools/replaceOrCreate:
+    post:
+      tags:
+        - license-pool
+      summary: >-
+        Replace an existing model instance or insert a new one into the data
+        source.
+      operationId: license-pool.replaceOrCreate__post_license-pools_replaceOrCreate
+      parameters:
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+  /license-pools/upsertWithWhere:
+    post:
+      tags:
+        - license-pool
+      summary: >-
+        Update an existing model instance or insert a new one into the data
+        source based on the where criteria.
+      operationId: license-pool.upsertWithWhere
+      parameters:
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          description: An object of model property name/value pairs
+          required: false
+          schema:
+            description: An object of model property name/value pairs
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+  '/license-pools/{id}/exists':
+    get:
+      tags:
+        - license-pool
+      summary: Check whether a model instance exists in the data source.
+      operationId: 'license-pool.exists__get_license-pools_{id}_exists'
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              exists:
+                type: boolean
+      deprecated: false
+  '/license-pools/{id}':
+    head:
+      tags:
+        - license-pool
+      summary: Check whether a model instance exists in the data source.
+      operationId: 'license-pool.exists__head_license-pools_{id}'
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              exists:
+                type: boolean
+      deprecated: false
+    get:
+      tags:
+        - license-pool
+      summary: 'Find a model instance by {{id}} from the data source.'
+      operationId: license-pool.findById
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+        - name: filter
+          in: query
+          description: >-
+            Filter defining fields and include - must be a JSON-encoded string
+            ({"something":"value"})
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+    put:
+      tags:
+        - license-pool
+      summary: >-
+        Replace attributes for a model instance and persist it into the data
+        source.
+      operationId: 'license-pool.replaceById__put_license-pools_{id}'
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+    delete:
+      tags:
+        - license-pool
+      summary: 'Delete a model instance by {{id}} from the data source.'
+      operationId: license-pool.deleteById
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+      deprecated: false
+    patch:
+      tags:
+        - license-pool
+      summary: >-
+        Patch attributes for a model instance and persist it into the data
+        source.
+      operationId: license-pool.prototype.patchAttributes
+      parameters:
+        - name: id
+          in: path
+          description: license-pool id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          description: An object of model property name/value pairs
+          required: false
+          schema:
+            description: An object of model property name/value pairs
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+  '/license-pools/{id}/replace':
+    post:
+      tags:
+        - license-pool
+      summary: >-
+        Replace attributes for a model instance and persist it into the data
+        source.
+      operationId: 'license-pool.replaceById__post_license-pools_{id}_replace'
+      parameters:
+        - name: id
+          in: path
+          description: Model id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+  /license-pools/findOne:
+    get:
+      tags:
+        - license-pool
+      summary: Find first instance of the model matched by filter from the data source.
+      operationId: license-pool.findOne
+      parameters:
+        - name: filter
+          in: query
+          description: >-
+            Filter defining fields, where, include, order, offset, and limit -
+            must be a JSON-encoded string ({"something":"value"})
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/license-pool'
+      deprecated: false
+  /license-pools/update:
+    post:
+      tags:
+        - license-pool
+      summary: 'Update instances of the model matched by {{where}} from the data source.'
+      operationId: license-pool.updateAll
+      parameters:
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          description: An object of model property name/value pairs
+          required: false
+          schema:
+            description: An object of model property name/value pairs
+            $ref: '#/definitions/license-pool'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            description: Information related to the outcome of the operation
+            type: object
+            properties:
+              count:
+                description: The number of instances updated
+                type: number
+                format: double
+      deprecated: false
+  /license-pools/count:
+    get:
+      tags:
+        - license-pool
+      summary: Count instances of the model matched by where from the data source.
+      operationId: license-pool.count
+      parameters:
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+                format: double
+      deprecated: false
+  /license-pools/change-stream:
+    post:
+      tags:
+        - license-pool
+      summary: Create a change stream.
+      operationId: license-pool.createChangeStream__post_license-pools_change-stream
+      parameters:
+        - name: options
+          in: formData
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: file
+      deprecated: false
+    get:
+      tags:
+        - license-pool
+      summary: Create a change stream.
+      operationId: license-pool.createChangeStream__get_license-pools_change-stream
+      parameters:
+        - name: options
+          in: query
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: file
+      deprecated: false
+  '/managers/{id}/accessTokens/{fk}':
+    get:
+      tags:
+        - manager
+      summary: Find a related item by id for accessTokens.
+      operationId: manager.prototype.__findById__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for accessTokens
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/AccessToken'
+      deprecated: false
+    delete:
+      tags:
+        - manager
+      summary: Delete a related item by id for accessTokens.
+      operationId: manager.prototype.__destroyById__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for accessTokens
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+    put:
+      tags:
+        - manager
+      summary: Update a related item by id for accessTokens.
+      operationId: manager.prototype.__updateById__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: fk
+          in: path
+          description: Foreign key for accessTokens
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/AccessToken'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/AccessToken'
+      deprecated: false
+  '/managers/{id}/accessTokens':
+    get:
+      tags:
+        - manager
+      summary: Queries accessTokens of manager.
+      operationId: manager.prototype.__get__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: filter
+          in: query
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccessToken'
+      deprecated: false
+    post:
+      tags:
+        - manager
+      summary: Creates a new instance in accessTokens of this model.
+      operationId: manager.prototype.__create__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: data
+          in: body
+          required: false
+          schema:
+            $ref: '#/definitions/AccessToken'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/AccessToken'
+      deprecated: false
+    delete:
+      tags:
+        - manager
+      summary: Deletes all accessTokens of this model.
+      operationId: manager.prototype.__delete__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  '/managers/{id}/accessTokens/count':
+    get:
+      tags:
+        - manager
+      summary: Counts accessTokens of manager.
+      operationId: manager.prototype.__count__accessTokens
+      parameters:
+        - name: id
+          in: path
+          description: manager id
+          required: true
+          type: string
+          format: JSON
+        - name: where
+          in: query
+          description: Criteria to match model instances
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: object
+            properties:
+              count:
+                type: number
+                format: double
+      deprecated: false
+  /managers:
+    post:
+      tags:
+        - manager
+      summary: Create a new instance of the model and persist it into the data source.
+      operationId: manager.create
+      parameters:
+        - name: data
+          in: body
+          description: Model instance data
+          required: false
+          schema:
+            description: Model instance data
+            $ref: '#/definitions/manager'
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            $ref: '#/definitions/manager'
+      deprecated: false
+    get:
+      tags:
+        - manager
+      summary: Find all instances of the model matched by filter from the data source.
+      operationId: manager.find
+      parameters:
+        - name: filter
+          in: query
+          description: >-
+            Filter defining fields, where, include, order, offset, and limit -
+            must be a JSON-encoded string ({"something":"value"})
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/manager'
+      deprecated: false
+  /managers/login:
+    post:
+      tags:
+        - manager
+      summary: Login a user with username/email and password.
+      operationId: manager.login
+      parameters:
+        - name: credentials
+          in: body
+          required: true
+          schema:
+            type: object
+        - name: include
+          in: query
+          description: >-
+            Related objects to include in the response. See the description of
+            return value for more details.
+          required: false
+          type: string
+          format: JSON
+      responses:
+        '200':
+          description: Request was successful
+          schema:
+            description: >+
+              El cuerpo de respuesta contiene propiedades de la AccessToken
+              creada durante el inicio de la sesión.
+
+              Dependiendo del valor del parámetro `include`, el cuerpo puede
+              contener propiedades adicionales:
+
+                - `user` - `U+007BUserU+007D` - Datos del usuario conectado actualmente. (`include=user`)
+
+            type: object
+      deprecated: false
+  /managers/logout:
+    post:
+      tags:
+        - manager
+      summary: Logout a user with access token.
+      operationId: manager.logout
+      parameters: []
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  /managers/reset:
+    post:
+      tags:
+        - manager
+      summary: Reset password for a user with email.
+      operationId: manager.resetPassword
+      parameters:
+        - name: options
+          in: body
+          required: true
+          schema:
+            type: object
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  /managers/change-password:
+    post:
+      tags:
+        - manager
+      summary: Change a user's password.
+      operationId: manager.changePassword
+      parameters:
+        - name: oldPassword
+          in: formData
+          required: true
+          type: string
+        - name: newPassword
+          in: formData
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
+  /managers/reset-password:
+    post:
+      tags:
+        - manager
+      summary: Reset user's password via a password-reset token.
+      operationId: manager.setPassword
+      parameters:
+        - name: newPassword
+          in: formData
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Request was successful
+      deprecated: false
 tags:
   - name: user
   - name: group
+  - name: license-pool
+  - name: manager
 consumes:
   - application/json
   - application/x-www-form-urlencoded
@@ -2448,19 +3168,128 @@ definitions:
     required:
       - id
     additionalProperties: false
-  group:
-    properties:
-      id:
-        $ref: '#/definitions/ObjectID'
-      ownerId:
-        $ref: '#/definitions/ObjectID'
-    additionalProperties: false
   user:
     properties:
+      username:
+        type: string
       firstName:
         type: string
       lastName:
         type: string
+      realm:
+        type: string
+      email:
+        type: string
+      emailVerified:
+        type: boolean
+      id:
+        $ref: '#/definitions/ObjectID'
+    required:
+      - username
+      - email
+    additionalProperties: false
+  cluster:
+    properties:
+      uuid:
+        type: string
+      description:
+        type: string
+      globalLicensing:
+        default: true
+        type: boolean
+      id:
+        $ref: '#/definitions/ObjectID'
+      groupId:
+        $ref: '#/definitions/ObjectID'
+    required:
+      - uuid
+      - globalLicensing
+    additionalProperties: false
+  organization:
+    properties:
+      uuid:
+        type: string
+      id:
+        $ref: '#/definitions/ObjectID'
+      groupId:
+        $ref: '#/definitions/ObjectID'
+      clusterId:
+        $ref: '#/definitions/ObjectID'
+    required:
+      - uuid
+    additionalProperties: false
+  license-pool:
+    properties:
+      duration:
+        type: number
+        format: double
+      expiration:
+        type: string
+        format: date-time
+      limit:
+        type: number
+        format: double
+      sensors:
+        type: object
+      status:
+        type: string
+      description:
+        type: string
+      id:
+        $ref: '#/definitions/ObjectID'
+      groupId:
+        $ref: '#/definitions/ObjectID'
+      clusterId:
+        $ref: '#/definitions/ObjectID'
+      organizationId:
+        $ref: '#/definitions/ObjectID'
+    required:
+      - duration
+      - expiration
+      - limit
+      - sensors
+    additionalProperties: false
+  GroupMember:
+    properties:
+      id:
+        $ref: '#/definitions/ObjectID'
+      groupId:
+        $ref: '#/definitions/ObjectID'
+      memberId:
+        $ref: '#/definitions/ObjectID'
+    additionalProperties: false
+  GroupAdmin:
+    properties:
+      id:
+        $ref: '#/definitions/ObjectID'
+      groupId:
+        $ref: '#/definitions/ObjectID'
+      adminId:
+        $ref: '#/definitions/ObjectID'
+    additionalProperties: false
+  group:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      id:
+        $ref: '#/definitions/ObjectID'
+      ownerId:
+        $ref: '#/definitions/ObjectID'
+    required:
+      - name
+      - type
+    additionalProperties: false
+  license:
+    properties:
+      id:
+        $ref: '#/definitions/ObjectID'
+      poolId:
+        $ref: '#/definitions/ObjectID'
+    additionalProperties: false
+  manager:
+    properties:
       realm:
         type: string
       username:
@@ -2472,56 +3301,7 @@ definitions:
       id:
         $ref: '#/definitions/ObjectID'
     required:
-      - firstName
-      - lastName
       - email
-    additionalProperties: false
-  groupuser:
-    properties:
-      id:
-        $ref: '#/definitions/ObjectID'
-      groupId:
-        $ref: '#/definitions/ObjectID'
-      userId:
-        $ref: '#/definitions/ObjectID'
-    additionalProperties: false
-  cluster:
-    properties:
-      id:
-        $ref: '#/definitions/ObjectID'
-      groupId:
-        $ref: '#/definitions/ObjectID'
-    additionalProperties: false
-  organization:
-    properties:
-      clusterId:
-        $ref: '#/definitions/ObjectID'
-      id:
-        $ref: '#/definitions/ObjectID'
-      groupId:
-        $ref: '#/definitions/ObjectID'
-    required:
-      - clusterId
-    additionalProperties: false
-  license-pool:
-    properties:
-      clusterId:
-        $ref: '#/definitions/ObjectID'
-      id:
-        $ref: '#/definitions/ObjectID'
-      groupId:
-        $ref: '#/definitions/ObjectID'
-      organizationId:
-        $ref: '#/definitions/ObjectID'
-    required:
-      - clusterId
-    additionalProperties: false
-  license:
-    properties:
-      id:
-        $ref: '#/definitions/ObjectID'
-      poolId:
-        $ref: '#/definitions/ObjectID'
     additionalProperties: false
   ObjectID:
     type: string
