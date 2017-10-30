@@ -7,8 +7,8 @@ const path = require('path');
 const app = require('../server/server');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const TestHelpers = require('./test-helpers');
-const UsersFixtures = require('./test-fixtures').users;
+
+const UserHelper = require('./helpers/user-helper');
 
 chai.should();
 chai.use(chaiHttp);
@@ -17,87 +17,83 @@ describe('User', () => {
   const User = app.models.User;
 
   let server = null;
-  let users = UsersFixtures.getUsers();
 
-  before(async () => {
+  beforeEach(async () => {
     server = await app.listen();
   });
 
-  after(async () => {
-    await app.models.User.destroyAll();
+  afterEach(async () => {
+    await User.destroyAll();
     await server.close();
   });
 
   it('Should be created', async () => {
-    await Promise.all(
-      users.map(async user => {
-        const res = await chai
-          .request(SERVER_URL)
-          .post('users')
-          .send(user);
+    const res = await chai
+      .request(SERVER_URL)
+      .post('users')
+      .send({
+        email: 'test1@test.com',
+        username: 'test1',
+        firstName: 'John',
+        lastName: 'Doe',
+        password: '12345678',
+      });
 
-        user.id = res.body.id;
-
-        res.should.have.status(200);
-        Object.entries(user).forEach(([key, value]) => {
-          if (res.body[key]) {
-            res.body[key].should.equal(value);
-          }
-        });
-      })
-    );
+    res.should.have.status(200);
+    res.body.should.contain({
+      email: 'test1@test.com',
+      username: 'test1',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
   });
 
   it('Should not be able to login yet', async () => {
-    await Promise.all(
-      users.map(async user => {
-        try {
-          await chai
-            .request(SERVER_URL)
-            .post('users/login')
-            .send(user);
-        } catch (err) {
-          err.should.have.status(401);
-        }
-      })
-    );
-  });
-
-  it('Should be confirmed', async () => {
-    await Promise.all(
-      users.map(async user => {
-        const userInstance = await User.findById(user.id);
-        await userInstance.verify({
-          type: 'email',
-          from: 'test',
-          mailer: TestHelpers.MockMailer,
+    try {
+      await chai
+        .request(SERVER_URL)
+        .post('users/login')
+        .send({
+          email: 'test1@test.com',
+          password: '12345678',
         });
-
-        await User.confirm(userInstance.id, userInstance.verificationToken, '');
-      })
-    );
+    } catch (err) {
+      err.should.have.status(401);
+    }
   });
 
-  it('Should be able to login once is verified', async () => {
-    await Promise.all(
-      users.map(async user => {
-        const res = await chai
-          .request(SERVER_URL)
-          .post('users/login')
-          .send({
-            email: user.email,
-            password: user.password,
-          });
+  it('Should be able to login once confirmed', async () => {
+    const user = (await chai
+      .request(SERVER_URL)
+      .post('users')
+      .send({
+        email: 'test1@test.com',
+        username: 'test1',
+        firstName: 'John',
+        lastName: 'Doe',
+        password: '12345678',
+      })).body;
 
-        res.should.have.status(200);
-        res.body.should.have.property('id');
-        res.body.should.have.property('userId');
-        res.body.should.have.property('ttl');
-        res.body.should.have.property('created');
+    let instance = await User.findById(user.id);
+    let res = await chai
+      .request(SERVER_URL)
+      .get('users/confirm')
+      .query({
+        uid: instance.id,
+        token: instance.verificationToken,
+      });
 
-        user.userToken = res.body.id;
-        user.userId = res.body.userId;
-      })
-    );
+    instance = await User.findById(user.id);
+    instance.emailVerified.should.equal(true);
+
+    res = await chai
+      .request(SERVER_URL)
+      .post('users/login')
+      .send({
+        email: 'test1@test.com',
+        password: '12345678',
+      });
+
+    res.status.should.equal(200);
   });
 });

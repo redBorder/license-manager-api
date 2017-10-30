@@ -7,41 +7,15 @@ const app = require('../server/server');
 const chai = require('chai');
 const _ = require('lodash');
 
-const TestHelpers = require('./test-helpers');
-const UsersFixtures = require('./test-fixtures').users;
+const UserHelper = require('./helpers/user-helper');
 
 describe('Organizations', () => {
-  const Group = app.models.Group;
-  const User = app.models.User;
-  const users = UsersFixtures.getUsers();
-
   let server = null;
-  let usersInstances = null;
+  let users = null;
 
   beforeEach(async () => {
     server = await app.listen();
-
-    usersInstances = await app.models.User.create(users);
-    await Promise.all(
-      usersInstances.map(user =>
-        user.verify(
-          {
-            type: 'email',
-            from: 'test',
-            mailer: TestHelpers.MockMailer,
-          },
-          () => User.confirm(user.id, user.verificationToken, '')
-        )
-      )
-    );
-
-    const authTokens = await Promise.all(
-      usersInstances.map(user => user.accessTokens.create())
-    );
-
-    authTokens.forEach(
-      (authToken, index) => (usersInstances[index].authToken = authToken)
-    );
+    users = await UserHelper.CreateInstances(app);
   });
 
   afterEach(async () => {
@@ -53,29 +27,29 @@ describe('Organizations', () => {
   });
 
   it('The owner not should be able to create organizations in a global mode cluster', async () => {
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
 
-    await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', true);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('test', true);
 
     try {
-      await owner.createOrganization('test', cluster);
-    } catch (err) {
-      err.should.have.status(500);
+      await cluster.createOrganization('test');
+    } catch (e) {
+      e.should.have.status(500);
     }
   });
 
   it('The owner should be able to create organizations in a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
 
-    await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('test', false);
     await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
 
-    const orgs = await owner.getOrganizations();
+    const orgs = await cluster.getOrganizations();
     const pairs = _.zip(organizationsUuids, orgs);
     const errors = pairs
       .map(([uuid, organization]) => organization === uuid)
@@ -86,126 +60,133 @@ describe('Organizations', () => {
 
   it('The owner should be able to remove organizations from a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
 
-    await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('test', false);
     const orgs = await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
-    await Promise.all(orgs.map(org => owner.removeOrganization(org)));
 
-    const organizations = await owner.getOrganizations();
+    await Promise.all(orgs.map(org => cluster.removeOrganization(org)));
+
+    const organizations = await cluster.getOrganizations();
     organizations.should.have.length(0);
   });
 
   it('An admin should be able to list organizations in a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const admin = new TestHelpers.UserHelper(SERVER_URL, usersInstances[1]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
+    const cluster = await group.createCluster('test', false);
     await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
-    await owner.addAdmin(usersInstances[1]);
-    admin.setGroup(group);
+    await group.addAdmin(admin);
+    const adminCluster = admin.attachGroup(group).attachCluster(cluster);
 
-    const organizations = await admin.getOrganizations();
+    const organizations = await adminCluster.getOrganizations();
     organizations.should.have.length(3);
   });
 
   it('An admin should be able to create organizations in a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const admin = new TestHelpers.UserHelper(SERVER_URL, usersInstances[1]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
-    await owner.addAdmin(usersInstances[1]);
-    admin.setGroup(group);
+    const cluster = await group.createCluster('test', false);
+    await group.addAdmin(admin);
+    const adminCluster = admin.attachGroup(group).attachCluster(cluster);
+
     const orgs = await Promise.all(
-      organizationsUuids.map(org => admin.createOrganization(org, cluster))
+      organizationsUuids.map(org => adminCluster.createOrganization(org))
     );
 
-    const pairs = _.zip(organizationsUuids, orgs);
-    const errors = pairs
-      .map(([uuid, organization]) => organization === uuid)
-      .reduce((prev, curr) => prev && curr);
     orgs.should.have.length(3);
-    errors.should.equal(false);
+    _.zip(organizationsUuids, orgs)
+      .map(([uuid, organization]) => organization === uuid)
+      .reduce((prev, curr) => prev && curr)
+      .should.equal(false);
   });
 
   it('An admin should be able to remove organizations from a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const admin = new TestHelpers.UserHelper(SERVER_URL, usersInstances[1]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
+    const cluster = await group.createCluster('test', false);
     const orgs = await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
-    await owner.addAdmin(usersInstances[1]);
-    admin.setGroup(group);
-    await Promise.all(orgs.map(org => admin.removeOrganization(org)));
+    await group.addAdmin(admin);
+    const adminCluster = admin.attachGroup(group).attachCluster(cluster);
 
-    const organizations = await admin.getOrganizations();
+    await Promise.all(orgs.map(org => adminCluster.removeOrganization(org)));
+
+    const organizations = await cluster.getOrganizations();
     organizations.should.have.length(0);
   });
 
   it('A member should be able to list organizations in a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const member = new TestHelpers.UserHelper(SERVER_URL, usersInstances[2]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
-    const orgs = await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+    const cluster = await group.createCluster('test', false);
+    const organizations = await Promise.all(
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
-    await owner.addMember(usersInstances[2]);
-    member.setGroup(group);
+    await group.addMember(member);
+    const memberCluster = member.attachGroup(group).attachCluster(cluster);
 
-    const organizations = await member.getOrganizations();
+    const orgs = await memberCluster.getOrganizations();
+
     organizations.should.have.length(3);
+    _.zip(organizationsUuids, orgs)
+      .map(([uuid, organization]) => organization === uuid)
+      .reduce((prev, curr) => prev && curr)
+      .should.equal(false);
   });
 
   it('A member should not be able to create organizations in a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const member = new TestHelpers.UserHelper(SERVER_URL, usersInstances[2]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
-    await owner.addMember(usersInstances[2]);
-    member.setGroup(group);
-    try {
-      const orgs = await Promise.all(
-        organizationsUuids.map(org => member.createOrganization(org, cluster))
-      );
-    } catch (err) {
-      err.should.have.status(401);
-    }
+    const cluster = await group.createCluster('test', false);
+    await group.addMember(member);
+    const memberCluster = member.attachGroup(group).attachCluster(cluster);
+
+    await Promise.all(
+      organizationsUuids
+        .map(org => memberCluster.createOrganization(org))
+        .map(p => p.catch(err => err.status.should.equal(401)))
+    );
   });
 
   it('A member should not be able to remove organizations from a cluster', async () => {
     const organizationsUuids = ['Org1', 'Org2', 'Org3'];
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const member = new TestHelpers.UserHelper(SERVER_URL, usersInstances[1]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[1]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', false);
+    const cluster = await group.createCluster('test', false);
     const orgs = await Promise.all(
-      organizationsUuids.map(org => owner.createOrganization(org, cluster))
+      organizationsUuids.map(org => cluster.createOrganization(org))
     );
-    await owner.addMember(usersInstances[2]);
-    member.setGroup(group);
-    try {
-      await Promise.all(orgs.map(org => member.removeOrganization(org)));
-    } catch (err) {
-      err.should.have.status(401);
-    }
+    await group.addMember(member);
+    const memberCluster = member.attachGroup(group).attachCluster(cluster);
+
+    await Promise.all(
+      organizationsUuids
+        .map(org => memberCluster.removeOrganization(org))
+        .map(p => p.catch(err => err.status.should.equal(401)))
+    );
   });
 });

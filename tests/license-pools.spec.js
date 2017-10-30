@@ -7,41 +7,16 @@ const app = require('../server/server');
 const chai = require('chai');
 const _ = require('lodash');
 
-const TestHelpers = require('./test-helpers');
-const UsersFixtures = require('./test-fixtures').users;
+const UserHelper = require('./helpers/user-helper');
+const GroupHelper = require('./helpers/group-helper');
 
 describe('License pools', () => {
-  const Group = app.models.Group;
-  const User = app.models.User;
-  const users = UsersFixtures.getUsers();
-
   let server = null;
-  let usersInstances = null;
+  let users = null;
 
   beforeEach(async () => {
     server = await app.listen();
-
-    usersInstances = await app.models.User.create(users);
-    await Promise.all(
-      usersInstances.map(user =>
-        user.verify(
-          {
-            type: 'email',
-            from: 'test',
-            mailer: TestHelpers.MockMailer,
-          },
-          () => User.confirm(user.id, user.verificationToken, '')
-        )
-      )
-    );
-
-    const authTokens = await Promise.all(
-      usersInstances.map(user => user.accessTokens.create())
-    );
-
-    authTokens.forEach(
-      (authToken, index) => (usersInstances[index].authToken = authToken)
-    );
+    users = await UserHelper.CreateInstances(app);
   });
 
   afterEach(async () => {
@@ -54,15 +29,16 @@ describe('License pools', () => {
   });
 
   it('A non-member should not be able to request a license pool', async () => {
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const nonMember = new TestHelpers.UserHelper(SERVER_URL, usersInstances[2]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const nonMember = new UserHelper(SERVER_URL, users[2]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', true);
-    nonMember.setGroup(group);
+    const cluster = await group.createCluster('test', true);
+
+    const helper = nonMember.attachGroup(group).attachCluster(cluster);
 
     try {
-      await nonMember.requestLicensePool({
+      await helper.requestLicensePool({
         duration: 1,
         expiration: '2018-5-29T09:00:00.000Z',
         limit: 500,
@@ -77,13 +53,13 @@ describe('License pools', () => {
   });
 
   it('A member should be able to request a license pool', async () => {
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const member = new TestHelpers.UserHelper(SERVER_URL, usersInstances[2]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', true);
-    member.setGroup(group);
-    await owner.addMember(usersInstances[2]);
+    await group.addMember(member);
+    const cluster = await group.createCluster('test', true);
+    const memberCluster = member.attachGroup(group).attachCluster(cluster);
 
     const validDurations = [1, 2, 12, 36];
     const validLimits = [
@@ -105,14 +81,14 @@ describe('License pools', () => {
           limit: limit,
           sensors: {ips: 5, flow: 10, social: 0},
           description: 'My description',
-          groupId: group.id,
-          clusterId: cluster.id,
+          groupId: group.getInstance().id,
+          clusterId: cluster.getInstance().id,
         }))
       )
     );
 
     const createdPools = await Promise.all(
-      pools.map(pool => member.requestLicensePool(pool))
+      pools.map(pool => memberCluster.requestLicensePool(pool))
     );
 
     const assertions = _.zip(pools, createdPools)
@@ -132,13 +108,14 @@ describe('License pools', () => {
   });
 
   it('A member should not be able to request a invalid license pool', async () => {
-    const owner = new TestHelpers.UserHelper(SERVER_URL, usersInstances[0]);
-    const member = new TestHelpers.UserHelper(SERVER_URL, usersInstances[2]);
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
     const group = await owner.createGroup('test');
-    const cluster = await owner.createCluster('test', true);
-    member.setGroup(group);
-    await owner.addMember(usersInstances[2]);
+    const cluster = await group.createCluster('test', true);
+    await group.addMember(member);
+
+    const helper = member.attachGroup(group).attachCluster(cluster);
 
     const invalidDurations = [3, 5, 120, 99];
     const invalidLimits = [123, 4444, 30040, 99999];
@@ -150,15 +127,15 @@ describe('License pools', () => {
           limit: limit,
           sensors: {ips: 5, flow: 10, social: 0},
           description: 'My description',
-          groupId: group.id,
-          clusterId: cluster.id,
+          groupId: group.getInstance().id,
+          clusterId: cluster.getInstance().id,
         }))
       )
     );
 
     await Promise.all(
       pools
-        .map(pool => owner.requestLicensePool(pool))
+        .map(pool => helper.requestLicensePool(pool))
         .map(p => p.catch(err => err.status.should.equal(422)))
     );
   });

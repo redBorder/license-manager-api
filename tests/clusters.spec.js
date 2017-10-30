@@ -7,41 +7,15 @@ const app = require('../server/server');
 const chai = require('chai');
 const _ = require('lodash');
 
-const TestHelpers = require('./test-helpers');
-const UsersFixtures = require('./test-fixtures').users;
+const UserHelper = require('./helpers/user-helper');
 
 describe('Clusters', () => {
-  const Group = app.models.Group;
-  const User = app.models.User;
-  const users = UsersFixtures.getUsers();
-
   let server = null;
-  let usersInstances = null;
+  let users = null;
 
   beforeEach(async () => {
     server = await app.listen();
-
-    usersInstances = await app.models.User.create(users);
-    await Promise.all(
-      usersInstances.map(user =>
-        user.verify(
-          {
-            type: 'email',
-            from: 'test',
-            mailer: TestHelpers.MockMailer,
-          },
-          () => User.confirm(user.id, user.verificationToken, '')
-        )
-      )
-    );
-
-    const authTokens = await Promise.all(
-      usersInstances.map(user => user.accessTokens.create())
-    );
-
-    authTokens.forEach(
-      (authToken, index) => (usersInstances[index].authToken = authToken)
-    );
+    users = await UserHelper.CreateInstances(app);
   });
 
   afterEach(async () => {
@@ -52,178 +26,139 @@ describe('Clusters', () => {
   });
 
   it('The owner should be able to list clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-
     const clusterUIDS = ['Cluster1', 'Cluster2', 'Cluster3'];
 
-    const group = await ownerHelper.createGroup('test');
-    await Promise.all(clusterUIDS.map(e => ownerHelper.createCluster(e)));
-    const clusters = await ownerHelper.getClusters();
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const group = await owner.createGroup('test');
+
+    await Promise.all(clusterUIDS.map(e => group.createCluster(e)));
+    const clusters = await group.getClusters();
 
     clusters.should.have.length(3);
     _.zip(clusters, clusterUIDS).forEach(e => e[0].uuid.should.equal(e[1]));
   });
 
   it('The owner should be able to create clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('TEST-UUID');
 
-    const group = await ownerHelper.createGroup('test');
-    const cluster = await ownerHelper.createCluster('TEST-UUID');
-
-    cluster.uuid.should.equal('TEST-UUID');
-    group.id.should.equal(cluster.groupId);
+    group.getInstance().id.should.equal(cluster.getInstance().groupId);
+    cluster.getInstance().uuid.should.equal('TEST-UUID');
   });
 
   it('The owner should be able to remove clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('TEST-UUID');
 
-    const group = await ownerHelper.createGroup('test');
-    const cluster = await ownerHelper.createCluster('TEST-UUID');
-    await ownerHelper.removeCluster(cluster);
+    await group.removeCluster(cluster);
 
-    const clusters = await ownerHelper.getClusters();
+    const clusters = await group.getClusters();
     clusters.should.have.length(0);
   });
 
   it('An admin should be able to list clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const adminHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[1]
-    );
-
     const clusterUIDS = ['Cluster1', 'Cluster2', 'Cluster3'];
 
-    const group = await ownerHelper.createGroup('test');
-    await Promise.all(clusterUIDS.map(e => ownerHelper.createCluster(e)));
-    await ownerHelper.addAdmin(usersInstances[1]);
-    adminHelper.setGroup(group);
-    const clusters = await adminHelper.getClusters();
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
+
+    const group = await owner.createGroup('test');
+    await Promise.all(clusterUIDS.map(e => group.createCluster(e)));
+    await group.addAdmin(admin);
+
+    const admins = await group.getAdmins();
+    const adminGroup = admin.attachGroup(group);
+    const clusters = await adminGroup.getClusters();
 
     clusters.should.have.length(3);
-    _.zip(clusters, clusterUIDS).forEach(e => e[0].uuid.should.equal(e[1]));
+    _.zip(clusters, clusterUIDS).forEach(([actual, expected]) =>
+      actual.uuid.should.equal(expected)
+    );
   });
 
   it('An admin should be able to create clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const adminHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[1]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
 
-    const group = await ownerHelper.createGroup('test');
-    ownerHelper.addAdmin(usersInstances[1]);
-    adminHelper.setGroup(group);
+    const group = await owner.createGroup('test');
+    const adminGroup = admin.attachGroup(group);
+    group.addAdmin(admin);
 
-    const cluster = await adminHelper.createCluster('TEST-UUID');
+    await adminGroup.createCluster('TEST-UUID');
+    const [cluster] = await adminGroup.getClusters();
 
     cluster.uuid.should.equal('TEST-UUID');
-    group.id.should.equal(cluster.groupId);
+    cluster.groupId.should.equal(group.getInstance().id);
   });
 
   it('An admin should be able to remove clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const adminHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[1]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const admin = new UserHelper(SERVER_URL, users[1]);
 
-    const group = await ownerHelper.createGroup('test');
-    const cluster = await ownerHelper.createCluster('TEST-UUID');
-    await ownerHelper.addAdmin(usersInstances[1]);
-    adminHelper.setGroup(group);
-    await adminHelper.removeCluster(cluster);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('TEST-UUID');
+    await group.addAdmin(admin);
+    const adminGroup = admin.attachGroup(group);
 
-    const clusters = await adminHelper.getClusters();
+    await adminGroup.removeCluster(cluster);
+    const clusters = await adminGroup.getClusters();
 
     clusters.should.have.length(0);
   });
 
   it('A member should be able to list clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const memberHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[2]
-    );
-
     const clusterUIDS = ['Cluster1', 'Cluster2', 'Cluster3'];
 
-    const group = await ownerHelper.createGroup('test');
-    await Promise.all(clusterUIDS.map(e => ownerHelper.createCluster(e)));
-    await ownerHelper.addMember(usersInstances[2]);
-    memberHelper.setGroup(group);
-    const clusters = await memberHelper.getClusters();
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
+
+    const group = await owner.createGroup('test');
+    await Promise.all(clusterUIDS.map(e => group.createCluster(e)));
+    await group.addMember(member);
+    const memberGroup = member.attachGroup(group);
+
+    const clusters = await memberGroup.getClusters();
 
     clusters.should.have.length(3);
-    _.zip(clusters, clusterUIDS).forEach(e => e[0].uuid.should.equal(e[1]));
+    _.zip(clusters, clusterUIDS).forEach(([actual, expected]) =>
+      actual.uuid.should.equal(expected)
+    );
   });
 
   it('A member should not be able to create clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const memberHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[2]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
-    const group = await ownerHelper.createGroup('test');
-    ownerHelper.addMember(usersInstances[2]);
-    memberHelper.setGroup(group);
+    const group = await owner.createGroup('test');
+    await group.addMember(member);
+    const memberGroup = member.attachGroup(group);
 
     try {
-      await memberHelper.createCluster('TEST-UUID');
+      await memberGroup.createCluster('TEST-UUID');
       throw 'Members are able to create clusters!';
-    } catch (err) {
-      err.should.have.status(401);
+    } catch (e) {
+      e.should.have.status(401);
     }
   });
 
   it('A member should not be able to remove clusters', async () => {
-    const ownerHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[0]
-    );
-    const memberHelper = new TestHelpers.UserHelper(
-      SERVER_URL,
-      usersInstances[2]
-    );
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member = new UserHelper(SERVER_URL, users[2]);
 
-    const group = await ownerHelper.createGroup('test');
-    const cluster = await ownerHelper.createCluster('TEST-UUID');
-    await ownerHelper.addMember(usersInstances[2]);
-    memberHelper.setGroup(group);
+    const group = await owner.createGroup('test');
+    const cluster = await group.createCluster('TEST-UUID');
+    await group.addMember(member);
+    const memberGroup = member.attachGroup(group);
 
     try {
-      await memberHelper.removeCluster('TEST-UUID');
-    } catch (err) {
-      err.should.have.status(401);
+      await memberGroup.removeCluster(cluster);
+    } catch (e) {
+      e.should.have.status(401);
+    } finally {
+      const clusters = await group.getClusters();
+      clusters.should.have.length(1);
     }
-
-    const clusters = await memberHelper.getClusters();
-
-    clusters.should.have.length(1);
   });
 });

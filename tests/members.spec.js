@@ -6,63 +6,18 @@ const SERVER_URL = 'http://localhost:3000/api/v0/';
 const path = require('path');
 const app = require('../server/server');
 const chai = require('chai');
-const TestHelpers = require('./test-helpers');
+
+const UserHelper = require('./helpers/user-helper');
 
 chai.should();
 
 describe('Members', () => {
-  const User = app.models.User;
-  const users = [
-    {
-      email: 'test1@test.com',
-      username: 'test1',
-      firstName: 'John',
-      lastName: 'Doe',
-      password: '12345678',
-    },
-    {
-      email: 'test2@test.com',
-      username: 'test2',
-      firstName: 'Jack',
-      lastName: 'Bauer',
-      password: '87654321',
-    },
-    {
-      email: 'test3@test.com',
-      username: 'test3',
-      firstName: 'Whoopi',
-      lastName: 'Goldberg',
-      password: '777777777',
-    },
-  ];
-
-  let usersInstances = null;
+  let users = null;
   let server = null;
 
   beforeEach(async () => {
     server = await app.listen();
-
-    usersInstances = await app.models.User.create(users);
-    await Promise.all(
-      usersInstances.map(user =>
-        user.verify(
-          {
-            type: 'email',
-            from: 'test',
-            mailer: TestHelpers.MockMailer,
-          },
-          () => User.confirm(user.id, user.verificationToken, '')
-        )
-      )
-    );
-
-    const authTokens = await Promise.all(
-      usersInstances.map(user => user.accessTokens.create())
-    );
-
-    authTokens.forEach(
-      (authToken, index) => (usersInstances[index].authToken = authToken)
-    );
+    users = await UserHelper.CreateInstances(app);
   });
 
   afterEach(async () => {
@@ -73,45 +28,42 @@ describe('Members', () => {
 
   it('Should be able to list his groups', async () => {
     await Promise.all(
-      usersInstances.map(async user => {
-        const helper = new TestHelpers.UserHelper(SERVER_URL, user);
+      users.map(async user => {
+        const owner = new UserHelper(SERVER_URL, user);
 
-        await helper.createGroup('test');
-        const groups = await helper.getGroups();
+        await owner.createGroup('test');
+        const groups = await owner.getGroups();
+
         groups[0].should.contain({name: `${user.username}/test`});
       })
     );
   });
 
-  it('Should not be able to list groups in which he is not a \
-member', async () => {
+  it('Should not be able to list groups in which he is not a member', async () => {
     await Promise.all(
-      usersInstances.map(async user => {
-        const helper = new TestHelpers.UserHelper(SERVER_URL, user);
+      users.map(async user => {
+        const helper = new UserHelper(SERVER_URL, user);
 
         await helper.createGroup('test');
         const groups = await helper.getGroups();
+
         groups[0].should.contain({name: `${user.username}/test`});
       })
     );
   });
 
   it('Should be able to get members from a group he belongs', async () => {
-    const owner = usersInstances[0];
-    const admin = usersInstances[1];
-    const member = usersInstances[2];
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const member1 = new UserHelper(SERVER_URL, users[1]);
+    const member2 = new UserHelper(SERVER_URL, users[2]);
 
-    const helper = new TestHelpers.UserHelper(SERVER_URL, owner);
+    const group = await owner.createGroup('test');
+    group.addMember(member1);
+    group.addMember(member2);
+    const memberGroup = member1.attachGroup(group);
 
-    await helper.createGroup('test');
-    helper.addMember(member);
-    // helper.addMember(admin);
+    const members = await memberGroup.getMembers();
 
-    // const members = await helper.getMembers();
-    const admins = await helper.getAdmins();
-
-    // console.log(members);
-
-    // admins.should.have.lengthOf(1);
+    members.should.have.lengthOf(3);
   });
 });
