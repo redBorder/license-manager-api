@@ -74,6 +74,21 @@ class ClusterHelper {
   }
 
   /**
+   * List license pools in the cluster.
+   *
+   * @return {Promise}     Array with licenses associated to this cluster
+   */
+  async getLicensePools() {
+    const res = await this.req
+      .get(`groups/${this.group.id}/license-pools`)
+      .set('Authorization', this.user.authToken.id);
+
+    return res.body.filter(
+      licensePool => licensePool.clusterId === this.cluster.id
+    );
+  }
+
+  /**
    * Request a license pool for the cluster.
    *
    * @param  {Object}  attributes Attributes of the license pool

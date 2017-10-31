@@ -64,6 +64,28 @@ class ManagerHelper {
 
     return res.body;
   }
+
+  /**
+   * Approves an existing license pool.
+   *
+   * @param  {String}  licensePool License pool ID to approve
+   */
+  async approve(licensePool) {
+    const res = await this.req
+      .post(`license-pools/${licensePool}/approve`)
+      .set('Authorization', this.manager.authToken.id);
+  }
+
+  /**
+   * Rejects an existing license pool.
+   *
+   * @param  {String}  licensePool License pool ID to approve
+   */
+  async reject(licensePool) {
+    const res = await this.req
+      .post(`license-pools/${licensePool}/reject`)
+      .set('Authorization', this.manager.authToken.id);
+  }
 }
 
 module.exports = ManagerHelper;
