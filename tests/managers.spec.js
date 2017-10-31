@@ -28,6 +28,9 @@ describe('Managers', () => {
   afterEach(async () => {
     await app.models.User.destroyAll();
     await app.models.Manager.destroyAll();
+    await app.models.Group.destroyAll();
+    await app.models.Cluster.destroyAll();
+    await app.models.LicensePool.destroyAll();
     await app.models.Manager.create({
       username: 'admin',
       password: 'admin',
@@ -92,5 +95,76 @@ describe('Managers', () => {
     });
 
     const licensePools = await manager.getLicensePools();
+    licensePools.should.have.length(1);
+  });
+
+  it('Manager should be able to approve license pools', async () => {
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const manager = new ManagerHelper(SERVER_URL, managerInstance);
+
+    const group = await owner.createGroup('my-group');
+    const cluster = await group.createCluster('my-cluster');
+    const req = await cluster.requestLicensePool({
+      duration: 1,
+      expiration: '2018-05-29T09:00:00.000Z',
+      limit: 500,
+      sensors: {ips: 5, flow: 10, social: 0},
+      description: 'My description',
+      groupId: group.getInstance().id,
+      clusterId: cluster.getInstance().id,
+    });
+
+    await manager.approve(req.id);
+    const [licensePool] = await manager.getLicensePools();
+
+    licensePool.status.should.equal('valid');
+  });
+
+  it('Manager should be able to reject license pools', async () => {
+    const owner = new UserHelper(SERVER_URL, users[0]);
+    const manager = new ManagerHelper(SERVER_URL, managerInstance);
+
+    const group = await owner.createGroup('my-group');
+    const cluster = await group.createCluster('my-cluster');
+    const req = await cluster.requestLicensePool({
+      duration: 1,
+      expiration: '2018-05-29T09:00:00.000Z',
+      limit: 500,
+      sensors: {ips: 5, flow: 10, social: 0},
+      description: 'My description',
+      groupId: group.getInstance().id,
+      clusterId: cluster.getInstance().id,
+    });
+
+    await manager.reject(req.id);
+    const [licensePool] = await manager.getLicensePools();
+
+    licensePool.status.should.equal('rejected');
+  });
+
+  it('Users should NOT be able to approve license pools', async () => {
+    const owner = new UserHelper(SERVER_URL, users[0]);
+
+    const group = await owner.createGroup('my-group');
+    const cluster = await group.createCluster('my-cluster');
+    const req = await cluster.requestLicensePool({
+      duration: 1,
+      expiration: '2018-05-29T09:00:00.000Z',
+      limit: 500,
+      sensors: {ips: 5, flow: 10, social: 0},
+      description: 'My description',
+      groupId: group.getInstance().id,
+      clusterId: cluster.getInstance().id,
+    });
+
+    let status = null;
+
+    try {
+      await owner.approve(req.id);
+    } catch (e) {
+      status = e.status;
+    }
+
+    status.should.equal(401);
   });
 });

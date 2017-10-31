@@ -53,6 +53,48 @@
       "foreignKey": "poolId"
     }
   },
-  "acls": [],
-  "methods": {}
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY",
+      "property": "*"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "manager",
+      "permission": "ALLOW",
+      "property": "find"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "manager",
+      "permission": "ALLOW",
+      "property": "findById"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "manager",
+      "permission": "ALLOW",
+      "property": "approve"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "manager",
+      "permission": "ALLOW",
+      "property": "reject"
+    }
+  ],
+  "methods": {
+    "prototype.approve": {
+      "description": ["Approves an existing license pool"],
+      "returns": {"arg": "body", "type": "license-pool", "root": true},
+      "http": {"verb": "post"}
+    },
+    "prototype.reject": {
+      "description": ["Reject an existing license pool"],
+      "returns": {"arg": "body", "type": "license-pool", "root": true},
+      "http": {"verb": "post"}
+    }
+  }
 }
