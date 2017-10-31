@@ -41,10 +41,6 @@ module.exports = function(app) {
   });
 
   Role.registerResolver('manager', (role, context, cb) => {
-    if (context.modelName !== 'manager') {
-      return process.nextTick(() => cb(null, false));
-    }
-
     if (!context.accessToken.userId) {
       return process.nextTick(() => cb(null, false));
     }
